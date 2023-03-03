@@ -2,10 +2,14 @@ import { useFormik } from 'formik'
 import React from 'react'
 import { useMutation } from 'react-query'
 
-import { AuthorizationControllerService, TLoginData } from '../../api'
+import {
+  AuthorizationControllerService,
+  TAuthResponseData,
+  TLoginData,
+} from '../../api'
+import { CommonError } from '../../types/errorTypes'
 import { AuthLayout } from '../AuthLayout/AuthLayout.component'
 import {
-  Button,
   Container,
   ErrorField,
   Form,
@@ -18,13 +22,13 @@ import {
 } from './Login.styles'
 
 export const Login: React.FC = () => {
-  const mutation = useMutation(
-    (requestBody: TLoginData) =>
-      AuthorizationControllerService.authControllerLogin({ requestBody }),
-    {
-      onSuccess: () => {},
-    },
-  )
+  const mutation = useMutation<
+    TAuthResponseData,
+    CommonError,
+    { requestBody: TLoginData }
+  >('login', AuthorizationControllerService.authControllerLogin, {
+    onSuccess: () => {},
+  })
   const formik = useFormik<TLoginData>({
     initialValues: {
       email: '',
@@ -35,14 +39,14 @@ export const Login: React.FC = () => {
   })
 
   const handleLogin = (): void => {
-    mutation.mutate(formik.values)
+    mutation.mutate({ requestBody: formik.values })
   }
 
   return (
     <AuthLayout>
       <Container>
         <FormContainer>
-          <Title>SIGN IN</Title>
+          <Title>LOGIN</Title>
           <Form>
             <TextField
               size='small'
@@ -67,18 +71,17 @@ export const Login: React.FC = () => {
               onBlur={formik.handleBlur}
             />
           </Form>
-          {mutation.isLoading ? (
-            <LoadingButton loading variant='outlined'>
-              Submit
-            </LoadingButton>
-          ) : (
-            <>
-              {mutation.isError && <ErrorField>{}</ErrorField>}
-              <Button variant='contained' onClick={handleLogin}>
-                Sign In
-              </Button>
-            </>
-          )}
+
+          <ErrorField>{mutation.error?.body.message ?? ''}</ErrorField>
+
+          <LoadingButton
+            loading={mutation.isLoading}
+            onClick={handleLogin}
+            variant='contained'
+          >
+            Login
+          </LoadingButton>
+
           <LinkContainer>
             Need an account? <Link to='/register'>SIGN UP</Link>
           </LinkContainer>

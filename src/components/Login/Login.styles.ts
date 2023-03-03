@@ -1,5 +1,5 @@
 import { LoadingButton as LoadingButtonMUI } from '@mui/lab'
-import { Button as ButtonMUI, TextField as TextFieldMUI } from '@mui/material'
+import { TextField as TextFieldMUI } from '@mui/material'
 import { Link as RRDLink } from 'react-router-dom'
 import styled from 'styled-components'
 
@@ -14,17 +14,9 @@ export const Container = styled.div`
   box-shadow: 0px 0px 5px 3px rgba(0, 0, 0, 0.2);
 `
 
-export const Button = styled(ButtonMUI)`
-  margin-top: 32px !important;
-  width: 100%;
-  background-color: #ee5684 !important;
-  border-radius: 5px !important;
-`
-
 export const LoadingButton = styled(LoadingButtonMUI)`
-  margin-top: 32px !important;
+  margin-top: 12px !important;
   width: 100%;
-  background-color: #ee5684 !important;
   border-radius: 5px !important;
 `
 
@@ -68,5 +60,7 @@ export const TextField = styled(TextFieldMUI)`
 `
 
 export const ErrorField = styled.div`
-  color: red;
+  color: #d32f2f;
+  font-size: 14px;
+  padding-top: 12px;
 `
