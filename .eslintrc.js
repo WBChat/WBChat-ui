@@ -26,6 +26,12 @@ module.exports = {
     },
   ],
   rules: {
+    '@typescript-eslint/unbound-method': [
+      'error',
+      {
+        ignoreStatic: true,
+      },
+    ],
     '@typescript-eslint/explicit-function-return-type': [
       'error',
       {

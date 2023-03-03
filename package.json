@@ -10,12 +10,13 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "generate-api": "openapi --useOptions -i ./spec.json -o ./src/api",
+    "generate-api": "openapi --useOptions -i https://wbchat-api.herokuapp.com/api/docs-json -o ./src/api && npx prettier ./src/api -w",
     "pre-commit": "set NODE_ENV=production&& npx --no-install lint-staged",
     "publish-lib": "npm publish --access public",
     "postinstall": "husky install",
     "prepack": "pinst --disable",
-    "postpack": "pinst --enable"
+    "postpack": "pinst --enable",
+    "prestart": "yarn generate-api"
   },
   "dependencies": {
     "@emotion/react": "^11.10.6",

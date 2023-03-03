@@ -1,32 +1,24 @@
-import { Button } from '@mui/material'
 import React from 'react'
-import { Outlet } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 
-import { ButtonContainer, Container, Link, Main } from './App.styles'
+import { Login } from '../Login'
+import { Registration } from '../Registration'
 
 export const App: React.FC = () => {
+  const isAuth = false
+
   return (
-    <Main>
-      <ButtonContainer>
-        <Link to='home'>
-          <Button style={{ backgroundColor: 'white', color: '#6d9ac4' }}>
-            Home
-          </Button>
-        </Link>
-        <Link to='login'>
-          <Button style={{ backgroundColor: 'white', color: '#6d9ac4' }}>
-            Login
-          </Button>
-        </Link>
-        <Link to='register'>
-          <Button style={{ backgroundColor: 'white', color: '#6d9ac4' }}>
-            Registration
-          </Button>
-        </Link>
-      </ButtonContainer>
-      <Container>
-        <Outlet />
-      </Container>
-    </Main>
+    <BrowserRouter>
+      {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition */}
+      {!isAuth ? (
+        <Routes>
+          <Route path='/login' element={<Login />} />
+          <Route path='/register' element={<Registration />} />
+          <Route path='*' element={<Navigate to='/login' />} />
+        </Routes>
+      ) : (
+        <Routes />
+      )}
+    </BrowserRouter>
   )
 }

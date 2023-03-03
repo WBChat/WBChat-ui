@@ -2,7 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type TLoginData = {
-  email: string
-  password: string
+export type UsersListResponse = {
+  count: number
+  list: Array<any[]>
 }

@@ -2,7 +2,7 @@ import { Link as RRDLink } from 'react-router-dom'
 import styled from 'styled-components'
 
 export const Main = styled.div`
-  background: #6d9ac4;
+  background: lightgray;
   height: 100vh;
   margin: -8px;
   display: flex;
@@ -18,11 +18,11 @@ export const ButtonContainer = styled.div`
   margin-top: 370px;
 `
 
+export const Link = styled(RRDLink)`
+  text-decoration: none;
+`
+
 export const Container = styled.div`
   display: flex;
   align-items: center;
-`
-
-export const Link = styled(RRDLink)`
-  text-decoration: none;
 `
