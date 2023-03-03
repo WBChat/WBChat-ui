@@ -1,16 +1,30 @@
 import { LoadingButton as LoadingButtonMUI } from '@mui/lab'
 import { TextField as TextFieldMUI } from '@mui/material'
-import { Link as RRDLink } from 'react-router-dom'
 import styled from 'styled-components'
 
-export const Container = styled.div`
+export const AnimatedFormContainer = styled.div`
+  @keyframes myAnim {
+    0% {
+      opacity: 0;
+      transform: translateY(-50px);
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  animation: myAnim 250ms ease 0s 1 normal both;
+`
+
+export const Container = styled(AnimatedFormContainer)`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: white;
-  border-radius: 7px;
-  padding: 50px 50px;
+  background-color: #313338;
+  border-radius: 5px;
+  padding: 32px 32px;
   box-shadow: 0px 0px 5px 3px rgba(0, 0, 0, 0.2);
 `
 
@@ -22,20 +36,14 @@ export const LoadingButton = styled(LoadingButtonMUI)`
 
 export const LinkContainer = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: center;
   margin-top: 15px;
-  color: black;
-  opacity: 65%;
   gap: 5px;
-`
-export const Link = styled(RRDLink)`
-  color: black;
 `
 
 export const Title = styled.div`
-  font-family: 'Cambria';
   font-weight: 700;
-  opacity: 65%;
   font-size: 20px;
   margin-bottom: 30px;
 `

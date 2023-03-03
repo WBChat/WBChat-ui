@@ -15,8 +15,7 @@
     "publish-lib": "npm publish --access public",
     "postinstall": "husky install",
     "prepack": "pinst --disable",
-    "postpack": "pinst --enable",
-    "prestart": "yarn generate-api"
+    "postpack": "pinst --enable"
   },
   "dependencies": {
     "@emotion/react": "^11.10.6",
