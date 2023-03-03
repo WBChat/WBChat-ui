@@ -1,4 +1,5 @@
 import {
+  Button,
   FormControl,
   FormHelperText,
   InputLabel,
@@ -8,17 +9,22 @@ import {
 import { useFormik } from 'formik'
 import React from 'react'
 import { useMutation } from 'react-query'
+import { useNavigate } from 'react-router-dom'
 import * as Yup from 'yup'
 
-import { AuthorizationControllerService, TUserRegistration } from '../../api'
-import { AuthLayout } from '../AuthLayout/AuthLayout.component'
 import {
-  Button,
+  AuthorizationControllerService,
+  TAuthResponseData,
+  TUserRegistration,
+} from '../../api'
+import { CommonError } from '../../types/errorTypes'
+import { AuthLayout } from '../AuthLayout/AuthLayout.component'
+import { ErrorField } from '../Login/Login.styles'
+import {
   Container,
   Form,
   FormBox,
   FormContainer,
-  Link,
   LinkContainer,
   LoadingButton,
   TextField,
@@ -26,7 +32,11 @@ import {
 } from './Registration.styles'
 
 export const Registration: React.FC = () => {
-  const mutation = useMutation(
+  const mutation = useMutation<
+    TAuthResponseData,
+    CommonError,
+    TUserRegistration
+  >(
     (requestBody: TUserRegistration) =>
       AuthorizationControllerService.authControllerRegistration({
         requestBody,
@@ -35,6 +45,8 @@ export const Registration: React.FC = () => {
       onSuccess: () => {},
     },
   )
+
+  const navigate = useNavigate()
 
   const formik = useFormik<
     Partial<TUserRegistration & { repeatPassword: string }>
@@ -277,17 +289,19 @@ export const Registration: React.FC = () => {
               </FormControl>
             </FormBox>
           </Form>
-          {mutation.isLoading ? (
-            <LoadingButton loading variant='outlined'>
-              Submit
-            </LoadingButton>
-          ) : (
-            <Button variant='contained' onClick={handleRegister}>
-              Sign Up
-            </Button>
-          )}
+          <ErrorField>{mutation.error?.body.message ?? ''}</ErrorField>
+          <LoadingButton
+            loading={mutation.isLoading}
+            onClick={handleRegister}
+            variant='contained'
+          >
+            Sign Up
+          </LoadingButton>
           <LinkContainer>
-            Already a user? <Link to='/login'>SIGN IN</Link>
+            <span>Already a user?</span>{' '}
+            <Button sx={{ mb: '-2px' }} onClick={() => navigate('/login')}>
+              SIGN IN
+            </Button>
           </LinkContainer>
         </FormContainer>
       </Container>

@@ -1,6 +1,6 @@
 import { Button } from '@mui/material'
 import { useFormik } from 'formik'
-import React from 'react'
+import React, { useContext } from 'react'
 import { useMutation } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 
@@ -9,6 +9,7 @@ import {
   TAuthResponseData,
   TLoginData,
 } from '../../api'
+import { AuthContext } from '../../context/AuthContext'
 import { CommonError } from '../../types/errorTypes'
 import { AuthLayout } from '../AuthLayout/AuthLayout.component'
 import {
@@ -24,12 +25,15 @@ import {
 
 export const Login: React.FC = () => {
   const navigate = useNavigate()
+  const { authenticate } = useContext(AuthContext)
   const mutation = useMutation<
     TAuthResponseData,
     CommonError,
     { requestBody: TLoginData }
   >('login', AuthorizationControllerService.authControllerLogin, {
-    onSuccess: () => {},
+    onSuccess: response => {
+      authenticate(response.access_token, response.refresh_token)
+    },
   })
   const formik = useFormik<TLoginData>({
     initialValues: {
