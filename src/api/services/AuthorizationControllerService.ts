@@ -28,6 +28,7 @@ export class AuthorizationControllerService {
       errors: {
         400: `Bad request`,
         401: `Unauthorized`,
+        500: `Internal server error`,
       },
     })
   }
@@ -46,6 +47,11 @@ export class AuthorizationControllerService {
       url: '/api/auth/login',
       body: requestBody,
       mediaType: 'application/json',
+      errors: {
+        400: `Bad request`,
+        401: `Unauthorized`,
+        500: `Internal server error`,
+      },
     })
   }
 }
