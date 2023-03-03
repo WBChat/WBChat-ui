@@ -3,14 +3,16 @@ import { Button as ButtonMUI, TextField as TextFieldMUI } from '@mui/material'
 import { Link as RRDLink } from 'react-router-dom'
 import styled from 'styled-components'
 
-export const Container = styled.div`
+import { AnimatedFormContainer } from '../Login/Login.styles'
+
+export const Container = styled(AnimatedFormContainer)`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   background-color: white;
-  border-radius: 7px;
-  padding: 50px 50px;
+  border-radius: 5px;
+  padding: 32px 32px;
   box-shadow: 0px 0px 5px 3px rgba(0, 0, 0, 0.2);
 `
 
@@ -57,7 +59,6 @@ export const FormContainer = styled.div`
 `
 
 export const Title = styled.div`
-  font-family: 'Cambria';
   font-weight: 700;
   opacity: 65%;
   font-size: 20px;

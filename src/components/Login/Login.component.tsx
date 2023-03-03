@@ -1,6 +1,8 @@
+import { Button } from '@mui/material'
 import { useFormik } from 'formik'
 import React from 'react'
 import { useMutation } from 'react-query'
+import { useNavigate } from 'react-router-dom'
 
 import {
   AuthorizationControllerService,
@@ -14,7 +16,6 @@ import {
   ErrorField,
   Form,
   FormContainer,
-  Link,
   LinkContainer,
   LoadingButton,
   TextField,
@@ -22,6 +23,7 @@ import {
 } from './Login.styles'
 
 export const Login: React.FC = () => {
+  const navigate = useNavigate()
   const mutation = useMutation<
     TAuthResponseData,
     CommonError,
@@ -83,7 +85,10 @@ export const Login: React.FC = () => {
           </LoadingButton>
 
           <LinkContainer>
-            Need an account? <Link to='/register'>SIGN UP</Link>
+            <span>Need an account?</span>{' '}
+            <Button sx={{ mb: '-2px' }} onClick={() => navigate('/register')}>
+              SIGN UP
+            </Button>
           </LinkContainer>
         </FormContainer>
       </Container>
