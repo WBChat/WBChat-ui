@@ -15,6 +15,7 @@ export type { TLoginData } from './models/TLoginData'
 export type { TSearch } from './models/TSearch'
 export { TUserRegistration } from './models/TUserRegistration'
 export type { UsersListResponse } from './models/UsersListResponse'
+export type { UserViewData } from './models/UserViewData'
 
 export { AuthorizationControllerService } from './services/AuthorizationControllerService'
 export { UsersControllerService } from './services/UsersControllerService'
