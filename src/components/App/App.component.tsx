@@ -2,6 +2,7 @@ import React, { useContext } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 
 import { AuthContext } from '../../context/AuthContext'
+import { Home } from '../Home'
 import { Login } from '../Login'
 import { Registration } from '../Registration'
 
@@ -17,7 +18,10 @@ export const App: React.FC = () => {
           <Route path='*' element={<Navigate to='/login' />} />
         </Routes>
       ) : (
-        <Routes />
+        <Routes>
+          <Route index element={<Home />} />
+          <Route path='*' element={<Navigate to='/' />} />
+        </Routes>
       )}
     </BrowserRouter>
   )

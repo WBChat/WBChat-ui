@@ -16,11 +16,13 @@ export class UsersControllerService {
    * @throws ApiError
    */
   public static usersControllerGetUsersList({
+    direct,
     page,
     pageSize,
     filter,
     search,
   }: {
+    direct?: boolean
     page?: number
     pageSize?: number
     filter?: Array<FilterModel>
@@ -30,6 +32,7 @@ export class UsersControllerService {
       method: 'GET',
       url: '/api/users/list',
       query: {
+        direct: direct,
         page: page,
         pageSize: pageSize,
         filter: filter,

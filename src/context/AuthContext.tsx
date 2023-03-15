@@ -7,6 +7,7 @@ interface ContextType {
   accessToken: string
   refreshToken: string
   authenticate: (a: string, r: string) => void
+  logout: () => void
 }
 
 export const AuthContext = createContext<ContextType>({
@@ -14,6 +15,7 @@ export const AuthContext = createContext<ContextType>({
   accessToken: '',
   refreshToken: '',
   authenticate: () => {},
+  logout: () => {},
 })
 
 interface Props {
