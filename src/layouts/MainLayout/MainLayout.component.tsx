@@ -1,9 +1,9 @@
+import { UsersControllerService } from '@api'
+import { AuthContext } from '@context'
 import { Button, ToggleButtonGroup } from '@mui/material'
 import { useContext, useState } from 'react'
 import { useQuery } from 'react-query'
 
-import { UsersControllerService } from '../../api'
-import { AuthContext } from '../../context/AuthContext'
 import {
   Avatar,
   Container,

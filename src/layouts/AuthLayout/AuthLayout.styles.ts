@@ -1,6 +1,5 @@
+import authBackground from '@assets/images/auth_background.png'
 import styled from 'styled-components'
-
-import authBackground from '../../assets/images/auth_background.png'
 
 export const Main = styled.div`
   background-image: url(${authBackground});

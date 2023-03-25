@@ -1,6 +1,6 @@
 import { createContext, useCallback, useMemo, useState } from 'react'
 
-import { OpenAPI } from '../api'
+import { OpenAPI } from '../../api'
 
 interface ContextType {
   isAuth: boolean

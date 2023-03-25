@@ -1,10 +1,10 @@
 import React, { useContext } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 
-import { AuthContext } from '../../context/AuthContext'
-import { Home } from '../Home'
-import { Login } from '../Login'
-import { Registration } from '../Registration'
+import { Home } from './components/Home'
+import { Login } from './components/Login'
+import { Registration } from './components/Registration'
+import { AuthContext } from './context/auth/AuthContext'
 
 export const App: React.FC = () => {
   const { isAuth } = useContext(AuthContext)

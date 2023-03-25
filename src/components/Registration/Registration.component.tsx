@@ -1,3 +1,5 @@
+import { CommonError } from '@commonTypes/errorTypes'
+import { AuthLayout } from '@layouts'
 import {
   Button,
   FormControl,
@@ -17,8 +19,6 @@ import {
   TAuthResponseData,
   TUserRegistration,
 } from '../../api'
-import { CommonError } from '../../types/errorTypes'
-import { AuthLayout } from '../AuthLayout/AuthLayout.component'
 import { ErrorField } from '../Login/Login.styles'
 import {
   Container,

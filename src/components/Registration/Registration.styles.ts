@@ -1,9 +1,9 @@
-import { LoadingButton as LoadingButtonMUI } from '@mui/lab'
-import { Button as ButtonMUI, TextField as TextFieldMUI } from '@mui/material'
+import { LoadingButton as LoadingButtonMUI } from '@mui/lab';
+import { Button as ButtonMUI, TextField as TextFieldMUI } from '@mui/material';
+import { AnimatedFormContainer } from '@style/animations';
 import { Link as RRDLink } from 'react-router-dom'
 import styled from 'styled-components'
 
-import { AnimatedFormContainer } from '../../style/animations'
 
 export const Container = styled(AnimatedFormContainer)`
   display: flex;

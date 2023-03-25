@@ -1,17 +1,17 @@
+import {
+  AuthorizationControllerService,
+  TAuthResponseData,
+  TLoginData,
+} from '@api'
+import { CommonError } from '@commonTypes/errorTypes'
+import { AuthContext } from '@context'
+import { AuthLayout } from '@layouts'
 import { Button } from '@mui/material'
 import { useFormik } from 'formik'
 import React, { useContext } from 'react'
 import { useMutation } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 
-import {
-  AuthorizationControllerService,
-  TAuthResponseData,
-  TLoginData,
-} from '../../api'
-import { AuthContext } from '../../context/AuthContext'
-import { CommonError } from '../../types/errorTypes'
-import { AuthLayout } from '../AuthLayout/AuthLayout.component'
 import {
   Container,
   ErrorField,
