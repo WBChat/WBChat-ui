@@ -1,4 +1,4 @@
-import { createContext, useCallback, useMemo, useState } from 'react'
+import { createContext, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { OpenAPI } from '../../api'
 
@@ -23,7 +23,7 @@ interface Props {
 }
 
 export const AuthProvider: React.FC<Props> = ({ children }) => {
-  const [isAuth, setIsAuth] = useState(!!localStorage.getItem('access_token'))
+  const [isAuth, setIsAuth] = useState(true)
   const [accessToken, setAccessToken] = useState(
     localStorage.getItem('access_token') ?? '',
   )
@@ -35,17 +35,19 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
     setIsAuth(true)
     setAccessToken(access)
     setRefreshToken(refresh)
-    OpenAPI.TOKEN = access
 
     localStorage.setItem('access_token', access)
     localStorage.setItem('refresh_token', refresh)
   }, [])
 
+  useEffect(() => {
+    OpenAPI.TOKEN = accessToken
+  }, [accessToken])
+
   const logout = useCallback(() => {
     setIsAuth(false)
     setAccessToken('')
     setRefreshToken('')
-    OpenAPI.TOKEN = ''
 
     localStorage.removeItem('access_token')
     localStorage.removeItem('refresh_token')
