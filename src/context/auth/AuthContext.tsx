@@ -23,7 +23,7 @@ interface Props {
 }
 
 export const AuthProvider: React.FC<Props> = ({ children }) => {
-  const [isAuth, setIsAuth] = useState(true)
+  const [isAuth, setIsAuth] = useState(!!localStorage.getItem('access_token'))
   const [accessToken, setAccessToken] = useState(
     localStorage.getItem('access_token') ?? '',
   )
@@ -40,9 +40,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
     localStorage.setItem('refresh_token', refresh)
   }, [])
 
-  useEffect(() => {
-    OpenAPI.TOKEN = accessToken
-  }, [accessToken])
+  OpenAPI.TOKEN = accessToken
 
   const logout = useCallback(() => {
     setIsAuth(false)

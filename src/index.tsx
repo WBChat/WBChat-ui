@@ -1,6 +1,6 @@
 import { OpenAPI } from '@api'
 import { AuthProvider } from '@context'
-import { ThemeProvider } from '@mui/material'
+import { ThemeProvider } from '@mui/system'
 import { GlobalStyles } from '@style/globalStyles'
 import { theme } from '@style/theme'
 import ReactDOM from 'react-dom/client'

@@ -1,8 +1,11 @@
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Button as ButtonMUI,
   ToggleButton as ToggleButtonMUI,
 } from '@mui/material'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 export const Main = styled.div`
   display: flex;
@@ -17,8 +20,9 @@ export const Container = styled.div`
 `
 
 export const Sidebar = styled.div`
-  color: #989aa2;
-  width: 15%;
+  color: rgba(223, 223, 227, 0.72);
+  max-width: 220px;
+  width: 40%;
   display: flex;
   flex-direction: column;
   background-color: #2b2d31;
@@ -61,21 +65,59 @@ export const ToggleButton = styled(ToggleButtonMUI)`
   width: 50%;
 `
 
-export const NameContainer = styled.div`
-  display: flex;
-  flex-direction: column;
+export const List = styled.div`
+  padding: 16px 0;
 `
 
-export const Name = styled.div``
-
-export const Status = styled.div`
-  display: flex;
-  justify-content: start;
-  font-size: 10px;
+export const ListGroup = styled(Accordion)`
+  background: transparent !important;
+  cursor: pointer !important;
+  box-shadow: none !important;
 `
 
-export const Avatar = styled.img`
-  height: 40px;
-  width: 40px;
-  border-radius: 50%;
+export const ListGroupDetails = styled(AccordionDetails)`
+  box-shadow: none !important;
+  padding: 0 !important;
+`
+
+export const ListGroupSummary = styled(AccordionSummary)`
+  padding: 0 !important;
+  cursor: pointer !important;
+  font-weight: 600;
+  font-size: 15px;
+  min-height: 36px !important;
+  .MuiAccordionSummary-content {
+    margin: 0 !important;
+  }
+
+  svg {
+    fill: rgba(223, 223, 227, 0.6) !important;
+    width: 20px;
+  }
+  color: rgba(223, 223, 227, 0.6) !important;
+`
+
+interface ChannelListItemProps {
+  active?: boolean
+}
+
+export const ChannelListItem = styled.div<ChannelListItemProps>`
+  padding: 10px 12px;
+  font-size: 16px;
+  border-radius: 3px;
+  color: rgba(223, 223, 227, 0.72);
+  cursor: pointer;
+  ${({ active }: ChannelListItemProps) =>
+    active &&
+    css`
+      background: #42a5f5;
+      color: #fff;
+      &:hover {
+        background: #42a5f5 !important;
+        color: #fff !important;
+      }
+    `};
+  &:hover {
+    background: #3a3a3a;
+  }
 `

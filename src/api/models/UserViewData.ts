@@ -3,8 +3,8 @@
 /* eslint-disable */
 
 export type UserViewData = {
-  first_name: string
-  last_name: string
+  _id: string
+  username: string
   status: string
   avatar: string
   created: string

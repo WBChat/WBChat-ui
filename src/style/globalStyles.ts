@@ -6,4 +6,8 @@ body {
   font-family: Roboto;
   color: white;
 }
+
+a {
+  text-decoration: none;
+}
 `
