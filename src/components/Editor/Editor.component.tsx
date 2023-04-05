@@ -1,26 +1,68 @@
-import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
+import { Editor as TinyEditor } from '@tinymce/tinymce-react'
+import { useRef, useState } from 'react'
+import { Editor as TEditor } from 'tinymce'
 
-import {
-  ActionsPanel,
-  EditorContainer,
-  EditorInput,
-  SendButton,
-} from './Editor.styles'
+import { EditorContainer } from './Editor.styles'
 
-export const Editor: React.FC = () => {
+interface EditorProps {
+  onSend: (v: string) => void
+}
+
+export const Editor: React.FC<EditorProps> = ({ onSend }) => {
+  const editorRef = useRef<TEditor>()
+  const [text, setText] = useState('')
+
+  const handleEditorInit = (evt: any, editor: TEditor): void => {
+    editorRef.current = editor
+  }
+
+  const handleSubmit = (): void => {
+    onSend(text)
+  }
+
   return (
     <EditorContainer>
-      <EditorInput
-        wrapperClassName='editor-wrapper'
-        editorClassName='editor'
-        toolbarClassName='editor-toolbar'
-        toolbar={{
-          options: ['inline', 'emoji'],
+      <TinyEditor
+        tinymceScriptSrc={`${process.env.PUBLIC_URL}/tinymce/tinymce.min.js`}
+        onInit={handleEditorInit}
+        value={text}
+        onEditorChange={setText}
+        onSubmit={handleSubmit}
+        init={{
+          height: 500,
+          menubar: false,
+          plugins: [
+            'advlist',
+            'autolink',
+            'lists',
+            'link',
+            'image',
+            'charmap',
+            'anchor',
+            'searchreplace',
+            'visualblocks',
+            'code',
+            'insertdatetime',
+            'media',
+            'emoticons',
+          ],
+          setup: editor => {
+            editor.on('keydown', e => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault()
+                handleSubmit()
+              }
+            })
+          },
+          toolbar:
+            'blocks | ' +
+            'bold italic forecolor | ' +
+            ' | bullist numlist outdent indent | ' +
+            ' emoticons | info',
+          content_style:
+            'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
         }}
       />
-      <ActionsPanel>
-        <SendButton>send</SendButton>
-      </ActionsPanel>
     </EditorContainer>
   )
 }

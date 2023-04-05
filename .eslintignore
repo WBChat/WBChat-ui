@@ -4,4 +4,5 @@ lint-staged.config.js
 next.config.js
 .eslintrc.js
 /src/api
+/public
 /bin

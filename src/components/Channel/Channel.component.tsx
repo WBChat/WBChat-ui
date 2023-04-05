@@ -11,13 +11,17 @@ import {
 export const Channel: React.FC = () => {
   const { channelId } = useParams()
 
+  const handlePostSent = (text: string): void => {
+    console.log(text)
+  }
+
   return (
     <ChannelContainer>
       <ChannelHeader>
         <ChannelTitle>{channelId}</ChannelTitle>
       </ChannelHeader>
       <EditorContainer>
-        <Editor />
+        <Editor onSend={handlePostSent} />
       </EditorContainer>
     </ChannelContainer>
   )
