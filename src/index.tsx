@@ -1,5 +1,5 @@
 import { OpenAPI } from '@api'
-import { AuthProvider } from '@context'
+import { AuthProvider, SocketProvider } from '@context'
 import { ThemeProvider } from '@mui/system'
 import { GlobalStyles } from '@style/globalStyles'
 import { theme } from '@style/theme'
@@ -18,8 +18,10 @@ root.render(
   <QueryClientProvider client={queryClient}>
     <ThemeProvider theme={theme}>
       <AuthProvider>
-        <GlobalStyles />
-        <App />
+        <SocketProvider>
+          <GlobalStyles />
+          <App />
+        </SocketProvider>
       </AuthProvider>
     </ThemeProvider>
   </QueryClientProvider>,

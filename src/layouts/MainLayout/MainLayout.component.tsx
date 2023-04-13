@@ -1,10 +1,10 @@
-import { ChannelsControllerService } from '@api'
 import { AuthContext } from '@context'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { Button, CircularProgress, ToggleButtonGroup } from '@mui/material'
 import { useCallback, useContext, useMemo, useState } from 'react'
 import { useQuery } from 'react-query'
 import { Link, Outlet, useParams } from 'react-router-dom'
+import { ChannelsControllerService } from 'src/api/index'
 import { Routes } from 'src/constants/routes'
 
 import {

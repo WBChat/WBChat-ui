@@ -21,3 +21,10 @@ export const EditorContainer = styled.div`
   left: 12px;
   right: 12px;
 `
+
+export const PostsArea = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+`

@@ -16,8 +16,9 @@ export const Editor: React.FC<EditorProps> = ({ onSend }) => {
     editorRef.current = editor
   }
 
-  const handleSubmit = (): void => {
-    onSend(text)
+  const handleSubmit = (value: string): void => {
+    onSend(value)
+    setText('')
   }
 
   return (
@@ -27,7 +28,6 @@ export const Editor: React.FC<EditorProps> = ({ onSend }) => {
         onInit={handleEditorInit}
         value={text}
         onEditorChange={setText}
-        onSubmit={handleSubmit}
         init={{
           height: 500,
           menubar: false,
@@ -50,7 +50,7 @@ export const Editor: React.FC<EditorProps> = ({ onSend }) => {
             editor.on('keydown', e => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault()
-                handleSubmit()
+                handleSubmit(editor.getContent())
               }
             })
           },
