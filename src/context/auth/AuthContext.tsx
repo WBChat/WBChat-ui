@@ -1,5 +1,7 @@
 import { OpenAPI } from '@api'
-import { createContext, useCallback, useMemo, useState } from 'react'
+import jwt_decode from 'jwt-decode'
+import { createContext, useCallback, useEffect, useMemo, useState } from 'react'
+import { CHECK_TOKEN_ITERVAL } from 'src/constants/token'
 
 interface ContextType {
   isAuth: boolean
@@ -38,6 +40,20 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
     localStorage.setItem('access_token', access)
     localStorage.setItem('refresh_token', refresh)
   }, [])
+
+  useEffect(() => {
+    const checkToken = setInterval(() => {
+      const decoded: { exp: number } = jwt_decode(accessToken)
+
+      if (decoded.exp < Date.now() / 1000) {
+        logout()
+      }
+    }, CHECK_TOKEN_ITERVAL)
+
+    return () => {
+      clearInterval(checkToken)
+    }
+  }, [accessToken])
 
   OpenAPI.TOKEN = accessToken
 

@@ -23,8 +23,11 @@ export const EditorContainer = styled.div`
 `
 
 export const PostsArea = styled.div`
-  width: 100%;
+  width: calc(100% - 68px);
   display: flex;
+  max-height: calc(100vh - 250px);
+  padding: 0 32px;
+  overflow-y: auto;
   flex-direction: column;
-  gap: 24px;
+  gap: 8px;
 `

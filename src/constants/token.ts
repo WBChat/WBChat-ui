@@ -1,0 +1,1 @@
+export const CHECK_TOKEN_ITERVAL = 5000

@@ -11,5 +11,10 @@ module.exports = {
       '@commonTypes': path.resolve(__dirname, 'src/types'),
       '@assets': path.resolve(__dirname, 'src/assets'),
     },
+    resolve: {
+      fallback: {
+        buffer: false,
+      },
+    },
   },
 }

@@ -1,7 +1,9 @@
 import {
+  ChannelViewData,
   ChannelsControllerService,
   Message,
   MessagesControllerService,
+  UsersControllerService,
 } from '@api'
 import { SocketContext } from '@context'
 import { useContext, useEffect, useState } from 'react'
@@ -9,6 +11,7 @@ import { useQuery } from 'react-query'
 import { useParams } from 'react-router-dom'
 
 import { Editor } from '../Editor/Editor.component'
+import { Post } from '../Post/Post.components'
 import {
   ChannelContainer,
   ChannelHeader,
@@ -50,6 +53,28 @@ export const Channel: React.FC = () => {
     },
   )
 
+  const { data: members, refetch: fetchMembers } = useQuery(
+    ['get-channel', channelInfo],
+    () => {
+      if (channelInfo?.isCommon) {
+        return UsersControllerService.usersControllerGetUsersList({})
+      }
+
+      return UsersControllerService.usersControllerGetUsersList({})
+    },
+    {
+      refetchOnMount: false,
+    },
+  )
+
+  useEffect(() => {
+    if (!channelInfo) {
+      return
+    }
+
+    fetchMembers()
+  }, [channelInfo])
+
   const handlePostSent = (text: string): void => {
     socket?.emit('send-message', { recipientId: channelId, text })
   }
@@ -69,7 +94,7 @@ export const Channel: React.FC = () => {
       </ChannelHeader>
       <PostsArea>
         {posts.map((post: Message) => {
-          return post.text
+          return <Post text={post.text} key={post._id} />
         })}
       </PostsArea>
       <EditorContainer>
