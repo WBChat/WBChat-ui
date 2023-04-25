@@ -92,6 +92,7 @@ export const Channel: React.FC = () => {
   }
 
   useEffect(() => {
+    console.log(socket)
     socket?.emit('connect-to-channel', { channelId })
 
     socket?.on('receive-message', post => {

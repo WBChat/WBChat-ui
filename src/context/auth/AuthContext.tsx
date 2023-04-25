@@ -64,6 +64,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
 
     localStorage.removeItem('access_token')
     localStorage.removeItem('refresh_token')
+    OpenAPI.TOKEN = undefined
   }, [])
 
   const value = useMemo(() => {
