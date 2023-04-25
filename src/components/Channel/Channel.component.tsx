@@ -55,12 +55,20 @@ export const Channel: React.FC = () => {
 
   const { data: members, refetch: fetchMembers } = useQuery(
     ['get-channel', channelInfo],
-    () => {
+    async () => {
+      let users = []
+
       if (channelInfo?.isCommon) {
-        return UsersControllerService.usersControllerGetUsersList({})
+        users = (await UsersControllerService.usersControllerGetUsersList({}))
+          .list
       }
 
-      return UsersControllerService.usersControllerGetUsersList({})
+      users = (await UsersControllerService.usersControllerGetUsersList({}))
+        .list
+
+      return users.reduce((acc, user) => {
+        return { ...acc, [user._id]: user }
+      }, {})
     },
     {
       refetchOnMount: false,
@@ -93,8 +101,16 @@ export const Channel: React.FC = () => {
         <ChannelTitle>{channelInfo?.name}</ChannelTitle>
       </ChannelHeader>
       <PostsArea>
-        {posts.map((post: Message) => {
-          return <Post text={post.text} key={post._id} />
+        {posts.map((post: Message, index: number) => {
+          return (
+            <Post
+              text={post.text}
+              sended={Number(post.sendedDate)}
+              sender={members?.[post.sender as keyof typeof members]}
+              key={post._id}
+              isLast={index === posts.length - 1}
+            />
+          )
         })}
       </PostsArea>
       <EditorContainer>

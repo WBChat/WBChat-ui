@@ -49,6 +49,7 @@ module.exports = {
     ],
     'react/react-in-jsx-scope': 'off',
     'no-param-reassign': 'off',
+    'no-bitwise': 'off',
     'import/no-extraneous-dependencies': 'off',
     '@typescript-eslint/no-unsafe-member-access': 'off',
     '@typescript-eslint/restrict-template-expressions': 'off',

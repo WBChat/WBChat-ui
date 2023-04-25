@@ -25,9 +25,27 @@ export const EditorContainer = styled.div`
 export const PostsArea = styled.div`
   width: calc(100% - 68px);
   display: flex;
-  max-height: calc(100vh - 250px);
-  padding: 0 32px;
+  max-height: calc(100vh - 260px);
+  padding: 16px 32px;
   overflow-y: auto;
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.1);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.2);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.4);
+  }
   flex-direction: column;
-  gap: 8px;
+  gap: 16px;
 `
