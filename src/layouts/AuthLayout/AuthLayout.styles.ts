@@ -1,4 +1,4 @@
-import authBackground from '@assets/images/auth_background.png'
+import authBackground from '@assets/images/auth_background.jpg'
 import styled from 'styled-components'
 
 export const Main = styled.div`
