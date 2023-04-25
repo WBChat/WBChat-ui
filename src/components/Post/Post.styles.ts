@@ -11,7 +11,10 @@ export const Username = styled.div`
   font-size: 15px;
 `
 
-export const Content = styled.div``
+export const Content = styled.div`
+  display: flex;
+  flex-direction: column;
+`
 
 export const Time = styled.span`
   font-size: 11px;
@@ -23,4 +26,8 @@ export const Text = styled.div`
   font-weight: 300;
   font-size: 15px;
   margin: -8px 0;
+
+  img {
+    max-width: 500px;
+  }
 `
