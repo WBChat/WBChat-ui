@@ -1,11 +1,11 @@
 import {
-  ChannelViewData,
   ChannelsControllerService,
   Message,
   MessagesControllerService,
   UsersControllerService,
 } from '@api'
 import { SocketContext } from '@context'
+import { Box, CircularProgress } from '@mui/material'
 import { useContext, useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
 import { useParams } from 'react-router-dom'
@@ -53,7 +53,11 @@ export const Channel: React.FC = () => {
     },
   )
 
-  const { data: members, refetch: fetchMembers } = useQuery(
+  const {
+    data: members,
+    refetch: fetchMembers,
+    isFetching: isMembersFetching,
+  } = useQuery(
     ['get-channel', channelInfo],
     async () => {
       let users = []
@@ -100,19 +104,26 @@ export const Channel: React.FC = () => {
       <ChannelHeader>
         <ChannelTitle>{channelInfo?.name}</ChannelTitle>
       </ChannelHeader>
-      <PostsArea>
-        {posts.map((post: Message, index: number) => {
-          return (
-            <Post
-              text={post.text}
-              sended={Number(post.sendedDate)}
-              sender={members?.[post.sender as keyof typeof members]}
-              key={post._id}
-              isLast={index === posts.length - 1}
-            />
-          )
-        })}
-      </PostsArea>
+      {isFetching || isMembersFetching ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <PostsArea>
+          {posts.map((post: Message, index: number) => {
+            return (
+              <Post
+                text={post.text}
+                sended={Number(post.sendedDate)}
+                sender={members?.[post.sender as keyof typeof members]}
+                key={post._id}
+                isLast={index === posts.length - 1}
+              />
+            )
+          })}
+        </PostsArea>
+      )}
+
       <EditorContainer>
         <Editor onSend={handlePostSent} />
       </EditorContainer>

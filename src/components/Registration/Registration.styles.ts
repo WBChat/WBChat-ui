@@ -1,9 +1,8 @@
-import { LoadingButton as LoadingButtonMUI } from '@mui/lab';
-import { Button as ButtonMUI, TextField as TextFieldMUI } from '@mui/material';
-import { AnimatedFormContainer } from '@style/animations';
+import { LoadingButton as LoadingButtonMUI } from '@mui/lab'
+import { Button as ButtonMUI, TextField as TextFieldMUI } from '@mui/material'
+import { AnimatedFormContainer } from '@style/animations'
 import { Link as RRDLink } from 'react-router-dom'
 import styled from 'styled-components'
-
 
 export const Container = styled(AnimatedFormContainer)`
   display: flex;
@@ -19,8 +18,9 @@ export const Container = styled(AnimatedFormContainer)`
 export const FormBox = styled.div`
   display: flex;
   flex-direction: column;
+  flex-wrap: wrap;
   gap: 32px;
-  width: 50%;
+  width: 100%;
 `
 
 export const LinkContainer = styled.div`
@@ -49,7 +49,7 @@ export const LoadingButton = styled(LoadingButtonMUI)`
 `
 
 export const FormContainer = styled.div`
-  width: 450px;
+  width: 280px;
   .MuiFormHelperText-root {
     position: absolute;
     bottom: -25px;

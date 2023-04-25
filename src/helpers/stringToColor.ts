@@ -1,7 +1,7 @@
 export const stringToColor = (str: string): string => {
   let hash = 0
 
-  if (str.length === 0) return str
+  if (str.length === 0) return 'transparent'
   for (let i = 0; i < str.length; i += 1) {
     hash = str.charCodeAt(i) + ((hash << 5) - hash)
     hash &= hash

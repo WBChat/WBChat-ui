@@ -11,6 +11,7 @@ import { useFormik } from 'formik'
 import React, { useContext } from 'react'
 import { useMutation } from 'react-query'
 import { useNavigate } from 'react-router-dom'
+import { Routes } from 'src/constants/routes'
 
 import {
   Container,
@@ -90,7 +91,10 @@ export const Login: React.FC = () => {
 
           <LinkContainer>
             <span>Need an account?</span>{' '}
-            <Button sx={{ mb: '-2px' }} onClick={() => navigate('/register')}>
+            <Button
+              sx={{ mb: '-2px' }}
+              onClick={() => navigate(Routes.Registration)}
+            >
               SIGN UP
             </Button>
           </LinkContainer>

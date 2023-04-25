@@ -1,10 +1,12 @@
 import { CommonError } from '@commonTypes/errorTypes'
+import { AuthContext } from '@context'
 import { AuthLayout } from '@layouts'
 import { Button } from '@mui/material'
 import { useFormik } from 'formik'
-import React from 'react'
+import React, { useContext } from 'react'
 import { useMutation } from 'react-query'
 import { useNavigate } from 'react-router-dom'
+import { Routes } from 'src/constants/routes'
 import * as Yup from 'yup'
 
 import {
@@ -25,6 +27,7 @@ import {
 } from './Registration.styles'
 
 export const Registration: React.FC = () => {
+  const { authenticate } = useContext(AuthContext)
   const mutation = useMutation<
     TAuthResponseData,
     CommonError,
@@ -35,7 +38,9 @@ export const Registration: React.FC = () => {
         requestBody,
       }),
     {
-      onSuccess: () => {},
+      onSuccess: res => {
+        authenticate(res.access_token, res.refresh_token)
+      },
     },
   )
 
@@ -164,7 +169,7 @@ export const Registration: React.FC = () => {
           </LoadingButton>
           <LinkContainer>
             <span>Already a user?</span>{' '}
-            <Button sx={{ mb: '-2px' }} onClick={() => navigate('/login')}>
+            <Button sx={{ mb: '-2px' }} onClick={() => navigate(Routes.Login)}>
               SIGN IN
             </Button>
           </LinkContainer>
