@@ -76,6 +76,7 @@ export const Channel: React.FC = () => {
     },
     {
       refetchOnMount: false,
+      refetchOnWindowFocus: false,
     },
   )
 
