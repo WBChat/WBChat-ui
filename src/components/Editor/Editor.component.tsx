@@ -12,7 +12,7 @@ export const Editor: React.FC<EditorProps> = ({ onSend }) => {
   const editorRef = useRef<TEditor>()
   const [text, setText] = useState('')
 
-  const handleEditorInit = (evt: any, editor: TEditor): void => {
+  const handleEditorInit = (evt: unknown, editor: TEditor): void => {
     editorRef.current = editor
   }
 

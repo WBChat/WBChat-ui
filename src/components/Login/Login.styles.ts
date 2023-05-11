@@ -39,7 +39,7 @@ export const FormContainer = styled.div`
   width: 250px;
 `
 
-export const Form = styled.div`
+export const Form = styled.form`
   display: flex;
   flex-direction: column;
   gap: 32px;
