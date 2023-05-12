@@ -3,7 +3,7 @@ import { AuthContext } from '@context'
 import { AuthLayout } from '@layouts'
 import { Button } from '@mui/material'
 import { useFormik } from 'formik'
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { useMutation } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 import { Routes } from 'src/constants/routes'
@@ -80,7 +80,23 @@ export const Registration: React.FC = () => {
       })
     },
   })
+
+  useEffect(() => {
+    const event = (e: KeyboardEvent): void => {
+      if (e.key === 'Enter') {
+        handleRegister()
+      }
+    }
+
+    window.addEventListener('keypress', event)
+
+    return () => {
+      window.removeEventListener('keypress', event)
+    }
+  }, [])
+
   const { repeatPassword, ...newFormikValues } = formik.values
+
   const handleRegister = (): void => {
     formik.handleSubmit()
   }
