@@ -1,23 +1,41 @@
 import styled from 'styled-components'
+import TextFieldMUI from '@mui/material/TextField';
 
 export const Settings = styled.div`
   display: none;
   user-select: none;
   :hover {
     cursor: pointer;
-    opacity: 70%;
   }
+`
+
+export const TextField = styled(TextFieldMUI)`
+  padding: 16px 0px 10px 0px !important;
+  input {
+    height: 18px !important;
+    width: 100% !important;
+  }
+  width: 100% !important;
+  
 `
 
 export const PostContainer = styled.div`
   color: white;
   display: flex;
+  position: relative;
   gap: 10px;
+  padding: 0 8px;
   :hover {
     background: #4d4e52;
   }
   &:hover ${Settings} {
-    display: block;
+    display: flex;
+  }
+
+  ${Settings} {
+    position: absolute;
+    right: 4px;
+    top: 4px;
   }
 `
 
@@ -29,6 +47,7 @@ export const Username = styled.div`
 export const Content = styled.div`
   display: flex;
   flex-direction: column;
+  width: 100%;
 `
 
 export const Time = styled.span`

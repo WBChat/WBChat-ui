@@ -59,7 +59,8 @@ export const Registration: React.FC = () => {
       username: Yup.string()
         .min(3, 'Too Short!')
         .max(21, 'Too Long!')
-        .required('First name field is required'),
+        .required('First name field is required')
+        .nullable(),
       password: Yup.string()
         .min(7, 'Too Short!')
         .max(21, 'Too Long!')
