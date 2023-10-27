@@ -99,16 +99,22 @@ export const Channel: React.FC = () => {
       setPosts((prev: Message[]) => [...prev, post])
     })
 
-    socket?.on('message-deleted', (payload: { messageId: string}) => {
-        setPosts((prev) => prev.filter((post) => post._id !== payload.messageId))
+    socket?.on('message-deleted', (payload: { messageId: string }) => {
+      setPosts(prev => prev.filter(post => post._id !== payload.messageId))
     })
 
-
-    socket?.on('message-edited', (payload: { payload: {messageId: string, text: string }}) => {
-      setPosts((prev) => {
-        return prev.map((post) => post._id === payload.payload.messageId ? { ...post, text: payload.payload.text } : post)
-      })
-  })
+    socket?.on(
+      'message-edited',
+      (payload: { payload: { messageId: string; text: string } }) => {
+        setPosts(prev => {
+          return prev.map(post =>
+            post._id === payload.payload.messageId
+              ? { ...post, text: payload.payload.text }
+              : post,
+          )
+        })
+      },
+    )
   }, [socket, posts])
 
   return (

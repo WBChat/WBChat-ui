@@ -2,22 +2,29 @@
 import { UserViewData } from '@api'
 import { AuthContext, SocketContext } from '@context'
 import DeleteIcon from '@mui/icons-material/Delete'
+import EditIcon from '@mui/icons-material/Edit'
 import IconButton from '@mui/material/IconButton'
-import EditIcon from '@mui/icons-material/Edit';
 import jwt_decode from 'jwt-decode'
 import { DateTime } from 'luxon'
-import { ChangeEvent, KeyboardEvent, useContext, useEffect, useRef, useState } from 'react'
+import {
+  ChangeEvent,
+  KeyboardEvent,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
+
 import { Avatar } from '../Avatar/Avatar.component'
 import {
   Content,
   PostContainer,
   Settings,
   Text,
+  TextField,
   Time,
   Username,
-  TextField
 } from './Post.styles'
-
 
 interface PostProps {
   text?: string
@@ -35,10 +42,17 @@ interface DecodedProps {
   _id: string
 }
 
-export const Post: React.FC<PostProps> = ({ text, isLast, sender, sended, id, channelId }) => {
+export const Post: React.FC<PostProps> = ({
+  text,
+  isLast,
+  sender,
+  sended,
+  id,
+  channelId,
+}) => {
   const ref = useRef<HTMLDivElement | null>(null)
   const { accessToken } = useContext(AuthContext)
-  const { socket }  = useContext(SocketContext)
+  const { socket } = useContext(SocketContext)
   const [isEdit, setIsEdit] = useState(false)
   const [editingValue, setEditingValue] = useState(text)
   const decoded: DecodedProps = jwt_decode(accessToken)
@@ -51,7 +65,7 @@ export const Post: React.FC<PostProps> = ({ text, isLast, sender, sended, id, ch
   }, [isLast])
 
   const handleMessageDelete = (): void => {
-    socket?.emit("delete-message", { messageId: id, channelId })
+    socket?.emit('delete-message', { messageId: id, channelId })
   }
 
   const handleMessageEdit = (): void => {
@@ -65,7 +79,11 @@ export const Post: React.FC<PostProps> = ({ text, isLast, sender, sended, id, ch
 
   const handleInputKeyPress = (e: KeyboardEvent): void => {
     if (e.key === 'Enter') {
-      socket?.emit("edit-message", { channelId, text: editingValue, messageId: id})
+      socket?.emit('edit-message', {
+        channelId,
+        text: editingValue,
+        messageId: id,
+      })
       setIsEdit(false)
     }
 
@@ -82,18 +100,39 @@ export const Post: React.FC<PostProps> = ({ text, isLast, sender, sended, id, ch
         <Username>
           {sender?.username ?? 'Unknown'} <Time>{time}</Time>
         </Username>
-        {isEdit ? <TextField id="outlined-basic" autoFocus variant="outlined" value={editingValue} onKeyDown={handleInputKeyPress} onChange={handleEditChanged} size='small' /> : <Text dangerouslySetInnerHTML={{ __html: text! }} ref={ref} />}
-        
+        {isEdit ? (
+          <TextField
+            id='outlined-basic'
+            autoFocus
+            variant='outlined'
+            value={editingValue}
+            onKeyDown={handleInputKeyPress}
+            onChange={handleEditChanged}
+            size='small'
+          />
+        ) : (
+          <Text dangerouslySetInnerHTML={{ __html: text! }} ref={ref} />
+        )}
       </Content>
       {decoded._id === sender?._id && (
         <Settings>
-          <IconButton aria-label='edit' size='small' sx={{ height: 'fit-content' }} onClick={handleMessageEdit}>
+          <IconButton
+            aria-label='edit'
+            size='small'
+            sx={{ height: 'fit-content' }}
+            onClick={handleMessageEdit}
+          >
             <EditIcon sx={{ fontSize: '16px' }} />
           </IconButton>
-          <IconButton aria-label='delete' size='small' sx={{ height: 'fit-content' }} onClick={handleMessageDelete}>
+          <IconButton
+            aria-label='delete'
+            size='small'
+            sx={{ height: 'fit-content' }}
+            onClick={handleMessageDelete}
+          >
             <DeleteIcon sx={{ fontSize: '16px' }} />
           </IconButton>
-      </Settings>
+        </Settings>
       )}
     </PostContainer>
   )

@@ -1,5 +1,5 @@
+import TextFieldMUI from '@mui/material/TextField'
 import styled from 'styled-components'
-import TextFieldMUI from '@mui/material/TextField';
 
 export const Settings = styled.div`
   display: none;
@@ -16,7 +16,6 @@ export const TextField = styled(TextFieldMUI)`
     width: 100% !important;
   }
   width: 100% !important;
-  
 `
 
 export const PostContainer = styled.div`
