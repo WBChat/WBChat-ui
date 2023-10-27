@@ -1,13 +1,8 @@
-import {
-  ChannelsControllerService,
-  Message,
-  MessagesControllerService,
-  UsersControllerService,
-} from '@api'
+import { Message } from '@api'
 import { SocketContext } from '@context'
 import { Box, CircularProgress } from '@mui/material'
-import { useContext, useEffect, useState } from 'react'
-import { useQuery } from 'react-query'
+import { useGetChannel, useGetMembers, useGetMessages } from '@queries'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 import { Editor } from '../Editor/Editor.component'
@@ -26,96 +21,56 @@ export const Channel: React.FC = () => {
 
   const [posts, setPosts] = useState<Message[]>([])
 
-  const { isFetching } = useQuery(
-    'get-messages',
-    () => {
-      return MessagesControllerService.messagesControllerGetChannelMessages({
-        channelId: channelId!,
-      })
+  const { isFetching } = useGetMessages({
+    onSuccess: (data: Message[]) => {
+      setPosts((prev: Message[]) => [...data, ...prev])
     },
-    {
-      onSuccess(data) {
-        setPosts((prev: Message[]) => [...data, ...prev])
-      },
-      refetchOnWindowFocus: false,
-    },
-  )
+    channelId: channelId ?? '',
+  })
 
-  const { data: channelInfo } = useQuery(
-    'get-channel',
-    () => {
-      return ChannelsControllerService.channelsControllerGetChannelById({
-        channelId: channelId!,
-      })
-    },
-    {
-      refetchOnWindowFocus: false,
-    },
-  )
+  const { data: channelInfo } = useGetChannel({ channelId: channelId ?? '' })
 
-  const {
-    data: members,
-    refetch: fetchMembers,
-    isFetching: isMembersFetching,
-  } = useQuery(
-    ['get-channel', channelInfo],
-    async () => {
-      let users = []
-
-      if (channelInfo?.isCommon) {
-        users = (await UsersControllerService.usersControllerGetUsersList({}))
-          .list
-      }
-
-      users = (await UsersControllerService.usersControllerGetUsersList({}))
-        .list
-
-      return users.reduce((acc, user) => {
-        return { ...acc, [user._id]: user }
-      }, {})
-    },
-    {
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-    },
-  )
-
-  useEffect(() => {
-    if (!channelInfo) {
-      return
-    }
-
-    fetchMembers()
-  }, [channelInfo])
+  const { data: members, isFetching: isMembersFetching } = useGetMembers({
+    channelInfo,
+  })
 
   const handlePostSent = (text: string): void => {
-    socket?.emit('send-message', { recipientId: channelId, text })
+    socket.emit('send-message', { recipientId: channelId, text })
   }
 
-  useEffect(() => {
-    socket?.emit('connect-to-channel', { channelId })
+  const handleReceiveMessage = useCallback((post: Message): void => {
+    setPosts((prev: Message[]) => [...prev, post])
+  }, [])
 
-    socket?.on('receive-message', post => {
-      setPosts((prev: Message[]) => [...prev, post])
-    })
-
-    socket?.on('message-deleted', (payload: { messageId: string }) => {
+  const handleMessageDeleted = useCallback(
+    (payload: { messageId: string }): void => {
       setPosts(prev => prev.filter(post => post._id !== payload.messageId))
-    })
+    },
+    [],
+  )
 
-    socket?.on(
-      'message-edited',
-      (payload: { payload: { messageId: string; text: string } }) => {
-        setPosts(prev => {
-          return prev.map(post =>
-            post._id === payload.payload.messageId
-              ? { ...post, text: payload.payload.text }
-              : post,
-          )
-        })
-      },
-    )
-  }, [socket, posts])
+  const handleMessageEdited = useCallback(
+    (payload: { payload: { messageId: string; text: string } }): void => {
+      setPosts(prev => {
+        return prev.map(post =>
+          post._id === payload.payload.messageId
+            ? { ...post, text: payload.payload.text }
+            : post,
+        )
+      })
+    },
+    [],
+  )
+
+  useEffect(() => {
+    socket.emit('connect-to-channel', { channelId })
+  }, [channelId])
+
+  useEffect(() => {
+    socket.on('receive-message', handleReceiveMessage)
+    socket.on('message-deleted', handleMessageDeleted)
+    socket.on('message-edited', handleMessageEdited)
+  }, [handleReceiveMessage, handleMessageDeleted, handleMessageEdited])
 
   return (
     <ChannelContainer>

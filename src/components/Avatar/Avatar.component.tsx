@@ -1,4 +1,4 @@
-import { stringToColor } from 'src/helpers/stringToColor'
+import { stringToColor } from '@helpers'
 
 import { Container } from './Avatar.styles'
 

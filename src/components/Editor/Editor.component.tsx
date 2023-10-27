@@ -55,12 +55,11 @@ export const Editor: React.FC<EditorProps> = ({ onSend }) => {
             })
           },
           toolbar:
-            'blocks | ' +
             'bold italic forecolor | ' +
             ' | bullist numlist outdent indent | ' +
             ' emoticons | info',
           content_style:
-            'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
+            'body { font-family:Helvetica,Arial,sans-serif; font-size:14px; background: #212325; color: #fff }}',
         }}
       />
     </EditorContainer>

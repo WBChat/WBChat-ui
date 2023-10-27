@@ -4,6 +4,7 @@ import {
   TLoginData,
 } from '@api'
 import { CommonError } from '@commonTypes/errorTypes'
+import { Routes } from '@constants'
 import { AuthContext } from '@context'
 import { AuthLayout } from '@layouts'
 import { Button } from '@mui/material'
@@ -11,7 +12,6 @@ import { useFormik } from 'formik'
 import React, { useContext, useEffect } from 'react'
 import { useMutation } from 'react-query'
 import { useNavigate } from 'react-router-dom'
-import { Routes } from 'src/constants/routes'
 
 import {
   Container,

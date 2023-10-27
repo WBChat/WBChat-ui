@@ -25,7 +25,7 @@ export const Sidebar = styled.div`
   width: 40%;
   display: flex;
   flex-direction: column;
-  background-color: #2b2d31;
+  background-color: #2B2E30;
   padding: 20px;
 `
 
@@ -35,7 +35,7 @@ export const Title = styled.div`
 `
 
 export const Header = styled.div`
-  background-color: #2b2d31;
+  background-color: #3A3A3A;
   display: flex;
   justify-content: space-between;
   align-items: center;

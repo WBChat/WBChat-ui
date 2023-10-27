@@ -1,9 +1,6 @@
 /* eslint-disable react/no-danger */
 import { UserViewData } from '@api'
 import { AuthContext, SocketContext } from '@context'
-import DeleteIcon from '@mui/icons-material/Delete'
-import EditIcon from '@mui/icons-material/Edit'
-import IconButton from '@mui/material/IconButton'
 import jwt_decode from 'jwt-decode'
 import { DateTime } from 'luxon'
 import {
@@ -25,6 +22,8 @@ import {
   Time,
   Username,
 } from './Post.styles'
+import { DotMenu } from './components/DotMenu/DotMenu.component'
+import { EmojiPicker } from './components/EmojiPicker/EmojiPicker.component'
 
 interface PostProps {
   text?: string
@@ -50,11 +49,16 @@ export const Post: React.FC<PostProps> = ({
   id,
   channelId,
 }) => {
-  const ref = useRef<HTMLDivElement | null>(null)
   const { accessToken } = useContext(AuthContext)
   const { socket } = useContext(SocketContext)
+
   const [isEdit, setIsEdit] = useState(false)
   const [editingValue, setEditingValue] = useState(text)
+  const [dotMenuOpened, setDotMenuOpened] = useState(false)
+  const [emojiPickerOpened, setEmojiPickerOpened] = useState(false)
+
+  const ref = useRef<HTMLDivElement | null>(null)
+
   const decoded: DecodedProps = jwt_decode(accessToken)
   const time = DateTime.fromMillis(sended).toLocaleString(DateTime.TIME_SIMPLE)
 
@@ -66,11 +70,21 @@ export const Post: React.FC<PostProps> = ({
 
   const handleMessageDelete = (): void => {
     socket?.emit('delete-message', { messageId: id, channelId })
+    setDotMenuOpened(false)
   }
 
   const handleMessageEdit = (): void => {
     setIsEdit(curr => !curr)
     setEditingValue(text)
+    setDotMenuOpened(false)
+  }
+
+  const handleMessageCopy = (): void => {
+    if (text) {
+      navigator.clipboard.writeText(text)
+    }
+
+    setDotMenuOpened(false)
   }
 
   const handleEditChanged = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -93,8 +107,10 @@ export const Post: React.FC<PostProps> = ({
     }
   }
 
+  const isActive = emojiPickerOpened || dotMenuOpened
+
   return (
-    <PostContainer>
+    <PostContainer isActive={isActive}>
       <Avatar username={sender?.username ?? 'U'} size={32} />
       <Content>
         <Username>
@@ -114,26 +130,22 @@ export const Post: React.FC<PostProps> = ({
           <Text dangerouslySetInnerHTML={{ __html: text! }} ref={ref} />
         )}
       </Content>
-      {decoded._id === sender?._id && (
-        <Settings>
-          <IconButton
-            aria-label='edit'
-            size='small'
-            sx={{ height: 'fit-content' }}
-            onClick={handleMessageEdit}
-          >
-            <EditIcon sx={{ fontSize: '16px' }} />
-          </IconButton>
-          <IconButton
-            aria-label='delete'
-            size='small'
-            sx={{ height: 'fit-content' }}
-            onClick={handleMessageDelete}
-          >
-            <DeleteIcon sx={{ fontSize: '16px' }} />
-          </IconButton>
-        </Settings>
-      )}
+      <Settings isActive={isActive}>
+        <EmojiPicker
+          open={emojiPickerOpened}
+          handleClose={() => setEmojiPickerOpened(false)}
+          onEmojiButtonClick={() => setEmojiPickerOpened(true)}
+        />
+        <DotMenu
+          open={dotMenuOpened}
+          onDotButtonClick={() => setDotMenuOpened(true)}
+          handleClose={() => setDotMenuOpened(false)}
+          onMessageCopy={handleMessageCopy}
+          onMessageDelete={handleMessageDelete}
+          onMessageEdit={handleMessageEdit}
+          ownPost={decoded._id === sender?._id}
+        />
+      </Settings>
     </PostContainer>
   )
 }

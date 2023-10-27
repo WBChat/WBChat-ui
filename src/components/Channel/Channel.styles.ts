@@ -3,11 +3,12 @@ import styled from 'styled-components'
 export const ChannelContainer = styled.div`
   position: relative;
   height: 100%;
+  background-color: #212325;
 `
 
 export const ChannelHeader = styled.div`
   padding: 12px 24px;
-  border-bottom: 1px solid #e0e1e3;
+  border-bottom: 1px solid #383A3D;
 `
 
 export const ChannelTitle = styled.span`
@@ -23,13 +24,13 @@ export const EditorContainer = styled.div`
 `
 
 export const PostsArea = styled.div`
-  width: calc(100% - 68px);
+  width: 100%;
   display: flex;
   max-height: calc(100vh - 260px);
-  padding: 16px 32px;
+  padding: 16px 0;
   overflow-y: auto;
   ::-webkit-scrollbar {
-    width: 6px;
+    width: 10px;
     height: 6px;
   }
 
@@ -40,12 +41,12 @@ export const PostsArea = styled.div`
 
   ::-webkit-scrollbar-thumb {
     border-radius: 10px;
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.3);
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.6);
   }
   flex-direction: column;
-  gap: 16px;
+  gap: 8px;
 `

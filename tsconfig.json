@@ -17,13 +17,16 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
-      "@layouts": ["src/layouts"],
-      "@api": ["src/api"],
-      "@context": ["src/context"],
+      "@layouts": ["src/shared/layouts"],
+      "@api": ["src/shared/api"],
+      "@context": ["src/shared/context"],
+      "@queries": ["src/shared/queries"],
       "@components": ["src/components"],
-      "@assets/*": ["src/assets/*"],
-      "@style/*": ["src/style/*"],
-      "@commonTypes/*": ["src/types/*"]
+      "@constants": ["src/shared/constants"],
+      "@helpers": ["src/shared/helpers"],
+      "@assets/*": ["src/shared/assets/*"],
+      "@style/*": ["src/shared/style/*"],
+      "@commonTypes/*": ["src/shared/types/*"]
     }
   },
   "include": ["src"]

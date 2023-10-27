@@ -15,10 +15,30 @@ export const EditorContainer = styled.div`
 
   .tox-tinymce {
     height: 116px !important;
+    border-color: #404144 !important;
   }
 
   .tox-statusbar {
     display: none !important;
+  }
+
+  .tox {
+    color: white !important;
+    svg {
+      fill: #8F8F92 !important;
+    }
+
+    button:hover, .tox-tbtn:hover {
+      background-color: rgba(45, 158, 224, 0.08);
+    }
+
+    button.tox-tbtn--enabled, .tox-tbtn.tox-tbtn--enabled {
+      background-color: rgba(45, 158, 224, 0.20);
+    }
+  }
+
+  .tox-editor-header, .tox-toolbar__primary {
+    background: #292B2D !important
   }
 `
 

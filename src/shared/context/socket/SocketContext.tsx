@@ -4,11 +4,11 @@ import { Socket, io } from 'socket.io-client'
 import { AuthContext } from '../auth/AuthContext'
 
 interface SocketContextType {
-  socket: null | Socket
+  socket: Socket
 }
 
 export const SocketContext = createContext<SocketContextType>({
-  socket: null,
+  socket: {} as Socket,
 })
 
 interface SocketProviderProps {
@@ -16,7 +16,7 @@ interface SocketProviderProps {
 }
 
 export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
-  const [socket, setSocket] = useState<null | Socket>(null)
+  const [socket, setSocket] = useState<Socket | null>(null)
   const { accessToken } = useContext(AuthContext)
   const value = useMemo(() => {
     return { socket }
@@ -36,7 +36,13 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     )
   }, [accessToken])
 
+  if (!value.socket) {
+    return null
+  }
+
   return (
-    <SocketContext.Provider value={value}>{children}</SocketContext.Provider>
+    <SocketContext.Provider value={value as SocketContextType}>
+      {children}
+    </SocketContext.Provider>
   )
 }

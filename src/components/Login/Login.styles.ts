@@ -2,7 +2,7 @@ import { LoadingButton as LoadingButtonMUI } from '@mui/lab'
 import { TextField as TextFieldMUI } from '@mui/material'
 import styled from 'styled-components'
 
-import { AnimatedFormContainer } from '../../style/animations'
+import { AnimatedFormContainer } from '@style/animations'
 
 export const Container = styled(AnimatedFormContainer)`
   display: flex;

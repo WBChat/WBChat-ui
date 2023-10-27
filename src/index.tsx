@@ -1,13 +1,13 @@
 import { OpenAPI } from '@api'
 import { AuthProvider, SocketProvider } from '@context'
 import { ThemeProvider } from '@mui/system'
+import '@style/fonts.css'
 import { GlobalStyles } from '@style/globalStyles'
 import { theme } from '@style/theme'
 import ReactDOM from 'react-dom/client'
 import { QueryClient, QueryClientProvider } from 'react-query'
 
 import { App } from './App'
-import './style/fonts.css'
 
 const root = ReactDOM.createRoot(document.getElementById('root')!)
 const queryClient = new QueryClient()

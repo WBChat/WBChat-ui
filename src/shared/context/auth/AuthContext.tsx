@@ -1,7 +1,7 @@
 import { OpenAPI } from '@api'
+import { CHECK_TOKEN_ITERVAL } from '@constants'
 import jwt_decode from 'jwt-decode'
 import { createContext, useCallback, useEffect, useMemo, useState } from 'react'
-import { CHECK_TOKEN_ITERVAL } from 'src/constants/token'
 
 interface ContextType {
   isAuth: boolean

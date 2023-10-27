@@ -1,3 +1,6 @@
+import { Routes as Paths } from '@constants'
+import { AuthContext } from '@context'
+import { MainLayout } from '@layouts'
 import React, { useContext } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 
@@ -5,9 +8,6 @@ import { Channel } from './components/Channel/Channel.component'
 import { Home } from './components/Home'
 import { Login } from './components/Login'
 import { Registration } from './components/Registration'
-import { Routes as Paths } from './constants/routes'
-import { AuthContext } from './context/auth/AuthContext'
-import { MainLayout } from './layouts/MainLayout/MainLayout.component'
 
 export const App: React.FC = () => {
   const { isAuth } = useContext(AuthContext)
