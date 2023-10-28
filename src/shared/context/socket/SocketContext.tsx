@@ -36,7 +36,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     )
   }, [accessToken])
 
-  if (!value.socket) {
+  if (accessToken && !value.socket) {
     return null
   }
 

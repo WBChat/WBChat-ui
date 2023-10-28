@@ -29,5 +29,6 @@
       "@commonTypes/*": ["src/shared/types/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["src/shared/api"]
 }

@@ -31,7 +31,7 @@ export const PostContainer = styled.div`
   transition: background 150ms;
   background: ${({isActive}: {isActive: boolean}) => isActive ? '#303234' : 'transparent'};
   :hover {
-    background: #303234;
+    background: rgba(223, 223, 227, 0.04);
   }
   &:hover ${Settings} {
     display: flex;

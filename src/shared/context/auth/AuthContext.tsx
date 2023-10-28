@@ -7,6 +7,7 @@ interface ContextType {
   isAuth: boolean
   accessToken: string
   refreshToken: string
+  userId: string | null
   authenticate: (a: string, r: string) => void
   logout: () => void
 }
@@ -15,6 +16,7 @@ export const AuthContext = createContext<ContextType>({
   isAuth: false,
   accessToken: '',
   refreshToken: '',
+  userId: null,
   authenticate: () => {},
   logout: () => {},
 })
@@ -42,6 +44,10 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
   }, [])
 
   useEffect(() => {
+    if (!accessToken) {
+      return
+    }
+
     const checkToken = setInterval(() => {
       const decoded: { exp: number } = jwt_decode(accessToken)
 
@@ -68,7 +74,14 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
   }, [])
 
   const value = useMemo(() => {
-    return { isAuth, accessToken, refreshToken, authenticate, logout }
+    return {
+      isAuth,
+      accessToken,
+      refreshToken,
+      authenticate,
+      logout,
+      userId: accessToken ? jwt_decode<{ _id: string }>(accessToken)._id : null,
+    }
   }, [isAuth, accessToken, refreshToken, authenticate, logout])
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

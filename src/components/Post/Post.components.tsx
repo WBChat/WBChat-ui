@@ -1,11 +1,14 @@
 /* eslint-disable react/no-danger */
 import { UserViewData } from '@api'
+import { ReactionsWithUserNames } from '@commonTypes/channelTypes'
 import { AuthContext, SocketContext } from '@context'
+import { EmojiClickData } from 'emoji-picker-react'
 import jwt_decode from 'jwt-decode'
 import { DateTime } from 'luxon'
 import {
   ChangeEvent,
   KeyboardEvent,
+  useCallback,
   useContext,
   useEffect,
   useRef,
@@ -24,6 +27,7 @@ import {
 } from './Post.styles'
 import { DotMenu } from './components/DotMenu/DotMenu.component'
 import { EmojiPicker } from './components/EmojiPicker/EmojiPicker.component'
+import { PostReactions } from './components/PostReactions/PostReactions.component'
 
 interface PostProps {
   text?: string
@@ -32,6 +36,8 @@ interface PostProps {
   isLast: boolean
   id: string
   channelId: string
+  reactions: ReactionsWithUserNames
+  members: Record<string, UserViewData>
 }
 
 interface DecodedProps {
@@ -48,6 +54,8 @@ export const Post: React.FC<PostProps> = ({
   sended,
   id,
   channelId,
+  reactions,
+  members,
 }) => {
   const { accessToken } = useContext(AuthContext)
   const { socket } = useContext(SocketContext)
@@ -56,6 +64,7 @@ export const Post: React.FC<PostProps> = ({
   const [editingValue, setEditingValue] = useState(text)
   const [dotMenuOpened, setDotMenuOpened] = useState(false)
   const [emojiPickerOpened, setEmojiPickerOpened] = useState(false)
+  const [postReactions, setPostReactions] = useState(reactions)
 
   const ref = useRef<HTMLDivElement | null>(null)
 
@@ -68,8 +77,84 @@ export const Post: React.FC<PostProps> = ({
     }
   }, [isLast])
 
+  const handleMessageReactionAdded = useCallback(
+    (payload: {
+      messageId: string
+      reaction: string
+      userId: string
+    }): void => {
+      if (payload.messageId !== id) {
+        return
+      }
+
+      setPostReactions(prev => {
+        const prevCount = Number(Boolean(prev[payload.reaction]?.count))
+        const prevUserNames = prev[payload.reaction]?.userNames ?? []
+
+        return {
+          ...prev,
+          [payload.reaction]: {
+            count: prevCount + 1,
+            userNames: [...prevUserNames, members[payload.userId].username],
+          },
+        }
+      })
+    },
+    [],
+  )
+
+  const handleMessageReactionRemoved = useCallback(
+    (payload: {
+      messageId: string
+      reaction: string
+      userId: string
+    }): void => {
+      if (payload.messageId !== id) {
+        return
+      }
+
+      setPostReactions(prev => {
+        if (prev[payload.reaction]?.count === 1) {
+          const { [payload.reaction]: deleted, ...updatedReactions } = prev
+
+          return updatedReactions
+        }
+
+        return {
+          ...prev,
+          [payload.reaction]: {
+            count: prev[payload.reaction].count - 1,
+            userNames: prev[payload.reaction].userNames.filter(
+              (name: string) => name !== members[payload.userId].username,
+            ),
+          },
+        }
+      })
+    },
+    [],
+  )
+
+  const handleReactionClick = (reaction: string, own: boolean): void => {
+    if (own) {
+      socket.emit('remove-message-reaction', {
+        messageId: id,
+        reaction,
+        channelId,
+      })
+
+      return
+    }
+
+    socket.emit('add-message-reaction', { messageId: id, reaction, channelId })
+  }
+
+  useEffect(() => {
+    socket.on('message-reaction-added', handleMessageReactionAdded)
+    socket.on('message-reaction-removed', handleMessageReactionRemoved)
+  }, [handleMessageReactionAdded, handleMessageReactionRemoved])
+
   const handleMessageDelete = (): void => {
-    socket?.emit('delete-message', { messageId: id, channelId })
+    socket.emit('delete-message', { messageId: id, channelId })
     setDotMenuOpened(false)
   }
 
@@ -77,6 +162,15 @@ export const Post: React.FC<PostProps> = ({
     setIsEdit(curr => !curr)
     setEditingValue(text)
     setDotMenuOpened(false)
+  }
+
+  const handleEmojiAdd = (emojiData: EmojiClickData): void => {
+    socket.emit('add-message-reaction', {
+      reaction: emojiData.emoji,
+      messageId: id,
+      channelId,
+    })
+    setEmojiPickerOpened(false)
   }
 
   const handleMessageCopy = (): void => {
@@ -93,7 +187,7 @@ export const Post: React.FC<PostProps> = ({
 
   const handleInputKeyPress = (e: KeyboardEvent): void => {
     if (e.key === 'Enter') {
-      socket?.emit('edit-message', {
+      socket.emit('edit-message', {
         channelId,
         text: editingValue,
         messageId: id,
@@ -129,12 +223,18 @@ export const Post: React.FC<PostProps> = ({
         ) : (
           <Text dangerouslySetInnerHTML={{ __html: text! }} ref={ref} />
         )}
+        <PostReactions
+          reactions={postReactions}
+          onReactionClick={handleReactionClick}
+        />
       </Content>
+
       <Settings isActive={isActive}>
         <EmojiPicker
           open={emojiPickerOpened}
           handleClose={() => setEmojiPickerOpened(false)}
           onEmojiButtonClick={() => setEmojiPickerOpened(true)}
+          onEmojiClick={handleEmojiAdd}
         />
         <DotMenu
           open={dotMenuOpened}

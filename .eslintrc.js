@@ -32,6 +32,7 @@ module.exports = {
         ignoreStatic: true,
       },
     ],
+    "consistent-return": "off",
     '@typescript-eslint/explicit-function-return-type': [
       'error',
       {

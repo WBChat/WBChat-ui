@@ -1,4 +1,5 @@
 import { Message } from '@api'
+import { ReactionsWithUserNames } from '@commonTypes/channelTypes'
 import { SocketContext } from '@context'
 import { Box, CircularProgress } from '@mui/material'
 import { useGetChannel, useGetMembers, useGetMessages } from '@queries'
@@ -49,6 +50,32 @@ export const Channel: React.FC = () => {
     [],
   )
 
+  const getReactionsWithUserNames = (
+    reactions: Message['reactions'],
+  ): ReactionsWithUserNames => {
+    if (!reactions) {
+      return {}
+    }
+
+    return Object.keys(reactions as object).reduce(
+      (
+        acc: ReactionsWithUserNames,
+        reaction: string,
+      ): ReactionsWithUserNames => {
+        return {
+          ...acc,
+          [reaction]: {
+            count: reactions[reaction].count,
+            userNames: reactions[reaction].user_ids.map(
+              (id: string) => members?.[id].username ?? '',
+            ),
+          },
+        }
+      },
+      {},
+    )
+  }
+
   const handleMessageEdited = useCallback(
     (payload: { payload: { messageId: string; text: string } }): void => {
       setPosts(prev => {
@@ -84,15 +111,19 @@ export const Channel: React.FC = () => {
       ) : (
         <PostsArea>
           {posts.map((post: Message, index: number) => {
+            const postReactions = getReactionsWithUserNames(post.reactions)
+
             return (
               <Post
                 text={post.text}
                 id={post._id}
                 channelId={post.channel_id}
+                reactions={postReactions}
                 sended={Number(post.sendedDate)}
-                sender={members?.[post.sender as keyof typeof members]}
+                sender={members?.[post.sender]}
                 key={post._id}
                 isLast={index === posts.length - 1}
+                members={members ?? {}}
               />
             )
           })}

@@ -1,11 +1,11 @@
 import { UseQueryResult, useQuery } from "react-query"
-import { UsersControllerService, ChannelViewData } from "@api"
+import { UsersControllerService, ChannelViewData, UserViewData } from "@api"
 
 interface Props {
     channelInfo?: ChannelViewData;
 }
 
-export const useGetMembers = (props: Props): UseQueryResult => {
+export const useGetMembers = (props: Props): UseQueryResult<Record<string, UserViewData>> => {
     const query = useQuery(
         ['get-members', props.channelInfo],
         async () => {
