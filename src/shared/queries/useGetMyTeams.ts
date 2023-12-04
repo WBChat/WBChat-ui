@@ -10,6 +10,7 @@ export const useGetMyTeams = (): UseQueryResult<TeamListResponse> => {
         },
         {
           refetchOnWindowFocus: false,
+          retry: false,
         },
       )
 
