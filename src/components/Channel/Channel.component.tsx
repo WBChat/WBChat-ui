@@ -3,7 +3,6 @@ import { ReactionsWithUserNames } from '@commonTypes/channelTypes'
 import { SocketContext } from '@context'
 import { Box, CircularProgress, useEventCallback } from '@mui/material'
 import { useGetChannel, useGetMembers, useGetMessages } from '@queries'
-import { channel } from 'diagnostics_channel'
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 

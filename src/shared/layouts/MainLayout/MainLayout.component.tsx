@@ -82,7 +82,7 @@ export const MainLayout: React.FC = () => {
     setOpenChannelModal(true)
   }
 
-  const handleCreateTeamClick = (e: React.MouseEvent): void => {
+  const handleCreateTeamClick = (): void => {
     setOpenTeamModal(true)
   }
 
