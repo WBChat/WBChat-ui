@@ -7,5 +7,5 @@ export type UserViewData = {
   username: string
   status: string
   avatar: string
-  created: string
+  created: number
 }

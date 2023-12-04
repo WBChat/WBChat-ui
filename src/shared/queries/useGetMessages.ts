@@ -8,7 +8,7 @@ interface Props {
 
 export const useGetMessages = (props: Props): UseQueryResult => {
     const query = useQuery(
-        'get-messages',
+        ['get-messages', props.channelId],
         () => {
           return MessagesControllerService.messagesControllerGetChannelMessages({
             channelId: props.channelId,

@@ -2,6 +2,6 @@ export enum Routes {
   Login = '/login',
   Registration = '/registration',
   Home = '/',
-  Channel = '/channel',
-  ChannelParams = '/channel/:channelId',
+  Team = '/team/:teamId',
+  ChannelParams = '/team/:teamId/channel/:channelId',
 }

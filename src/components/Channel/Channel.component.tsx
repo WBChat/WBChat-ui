@@ -1,8 +1,9 @@
 import { Message } from '@api'
 import { ReactionsWithUserNames } from '@commonTypes/channelTypes'
 import { SocketContext } from '@context'
-import { Box, CircularProgress } from '@mui/material'
+import { Box, CircularProgress, useEventCallback } from '@mui/material'
 import { useGetChannel, useGetMembers, useGetMessages } from '@queries'
+import { channel } from 'diagnostics_channel'
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
@@ -24,7 +25,7 @@ export const Channel: React.FC = () => {
 
   const { isFetching } = useGetMessages({
     onSuccess: (data: Message[]) => {
-      setPosts((prev: Message[]) => [...data, ...prev])
+      setPosts(data)
     },
     channelId: channelId ?? '',
   })
@@ -35,13 +36,19 @@ export const Channel: React.FC = () => {
     channelInfo,
   })
 
-  const handlePostSent = (text: string): void => {
+  const handlePostSent = useEventCallback((text: string): void => {
     socket.emit('send-message', { recipientId: channelId, text })
-  }
+  })
 
-  const handleReceiveMessage = useCallback((post: Message): void => {
-    setPosts((prev: Message[]) => [...prev, post])
-  }, [])
+  const handleReceiveMessage = useCallback(
+    (post: Message): void => {
+      if (post.channel_id !== channelId) {
+        return
+      }
+      setPosts((prev: Message[]) => [...prev, post])
+    },
+    [channelId],
+  )
 
   const handleMessageDeleted = useCallback(
     (payload: { messageId: string }): void => {
@@ -97,6 +104,12 @@ export const Channel: React.FC = () => {
     socket.on('receive-message', handleReceiveMessage)
     socket.on('message-deleted', handleMessageDeleted)
     socket.on('message-edited', handleMessageEdited)
+
+    return () => {
+      socket.off('receive-message', handleReceiveMessage)
+      socket.off('message-deleted', handleMessageDeleted)
+      socket.off('message-edited', handleMessageEdited)
+    }
   }, [handleReceiveMessage, handleMessageDeleted, handleMessageEdited])
 
   return (

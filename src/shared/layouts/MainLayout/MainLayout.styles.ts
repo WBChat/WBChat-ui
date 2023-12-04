@@ -40,6 +40,7 @@ export const Header = styled.div`
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid #1e1f22;
+  gap: 12px;
   padding: 5px 20px;
 `
 

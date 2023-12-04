@@ -11,11 +11,6 @@ export const useGetMembers = (props: Props): UseQueryResult<Record<string, UserV
         async () => {
           let users = []
     
-          if (props.channelInfo?.isCommon) {
-            users = (await UsersControllerService.usersControllerGetUsersList({}))
-              .list
-          }
-    
           users = (await UsersControllerService.usersControllerGetUsersList({}))
             .list
     

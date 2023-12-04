@@ -8,6 +8,7 @@ import { Channel } from './components/Channel/Channel.component'
 import { Home } from './components/Home'
 import { Login } from './components/Login'
 import { Registration } from './components/Registration'
+import { Team } from './components/Team'
 
 export const App: React.FC = () => {
   const { isAuth } = useContext(AuthContext)
@@ -23,8 +24,9 @@ export const App: React.FC = () => {
         </Routes>
       ) : (
         <Routes>
+          <Route path={Paths.Home} element={<Home />} />
           <Route path='' element={<MainLayout />}>
-            <Route path={Paths.Home} element={<Home />} />
+            <Route path={Paths.Team} element={<Team />} />
             <Route path={Paths.ChannelParams} element={<Channel />} />
           </Route>
 

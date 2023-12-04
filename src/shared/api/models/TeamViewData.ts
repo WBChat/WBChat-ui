@@ -2,9 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type ChannelViewData = {
+export type TeamViewData = {
   _id: string
   name: string
-  members: Array<string>
-  description?: string
 }

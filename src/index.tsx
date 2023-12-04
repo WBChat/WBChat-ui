@@ -8,6 +8,7 @@ import ReactDOM from 'react-dom/client'
 import { QueryClient, QueryClientProvider } from 'react-query'
 
 import { App } from './App'
+import { TeamProvider } from './shared/context/team/TeamContext'
 
 const root = ReactDOM.createRoot(document.getElementById('root')!)
 const queryClient = new QueryClient()
@@ -19,8 +20,10 @@ root.render(
     <ThemeProvider theme={theme}>
       <AuthProvider>
         <SocketProvider>
-          <GlobalStyles />
-          <App />
+          <TeamProvider>
+            <GlobalStyles />
+            <App />
+          </TeamProvider>
         </SocketProvider>
       </AuthProvider>
     </ThemeProvider>

@@ -1,11 +1,30 @@
-import { ChannelsControllerService } from '@api'
+import {
+  ChannelsControllerService,
+  SuccessResponse,
+  TCreateChannelData,
+  TCreateTeamData,
+  TeamViewData,
+  TeamsControllerService,
+} from '@api'
+import { CommonError } from '@commonTypes/errorTypes'
 import { Routes } from '@constants'
 import { AuthContext } from '@context'
+import AddIcon from '@mui/icons-material/Add'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import { Button, CircularProgress, ToggleButtonGroup } from '@mui/material'
-import { useCallback, useContext, useMemo, useState } from 'react'
-import { useQuery } from 'react-query'
-import { Link, Outlet, useParams } from 'react-router-dom'
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Divider,
+  IconButton,
+  Typography,
+} from '@mui/material'
+import { useContext, useState } from 'react'
+import { useMutation, useQuery } from 'react-query'
+import { Link, Navigate, Outlet, useParams } from 'react-router-dom'
+import { TeamContext } from 'src/shared/context/team/TeamContext'
+import { CreateChannelModal } from 'src/shared/modals'
+import { CreateTeamModal } from 'src/shared/modals/CreateTeamModal'
 
 import {
   ChannelListItem,
@@ -19,81 +38,145 @@ import {
   Main,
   Sidebar,
   Title,
-  ToggleButton,
 } from './MainLayout.styles'
-import { SidebarMode } from './MainLayout.types'
 
 export const MainLayout: React.FC = () => {
-  const [sidebarMode, setSidebarMode] = useState<SidebarMode>(
-    SidebarMode.Channels,
-  )
   const { logout } = useContext(AuthContext)
-  const { channelId } = useParams()
+  const { channelId, teamId } = useParams()
 
-  const { data: channelsData, isFetching: channelsLoading } = useQuery(
-    'channels-list',
+  const createChannel = useMutation<
+    SuccessResponse,
+    CommonError,
+    { requestBody: TCreateChannelData }
+  >('create_channel', ChannelsControllerService.channelsControllerCreateChannel)
+
+  const createTeam = useMutation<
+    SuccessResponse,
+    CommonError,
+    { requestBody: TCreateTeamData }
+  >('create_team', TeamsControllerService.teamsControllerCreateTeam)
+
+  const { getTeamById, teamsList, refetchTeams } = useContext(TeamContext)
+
+  const [openChannelModal, setOpenChannelModal] = useState(false)
+  const [openTeamModal, setOpenTeamModal] = useState(false)
+
+  const {
+    data: channelsData,
+    isFetching: channelsLoading,
+    refetch,
+  } = useQuery(
+    ['channels-list', teamId],
     () => {
-      return ChannelsControllerService.channelsControllerGetMyChannels()
+      return ChannelsControllerService.channelsControllerGetMyChannels({
+        teamId: teamId ?? '',
+      })
     },
     {
       refetchOnWindowFocus: false,
     },
   )
 
-  const { commonChannels, activeChannels } = useMemo(() => {
-    return {
-      commonChannels: channelsData?.channels.filter(
-        channel => channel.isCommon,
-      ),
-      activeChannels: channelsData?.channels.filter(
-        channel => !channel.isCommon,
-      ),
-    }
-  }, [channelsData])
+  const handleAddChannelClick = (e: React.MouseEvent): void => {
+    e.stopPropagation()
+    setOpenChannelModal(true)
+  }
 
-  const handleSidebarModeChange = useCallback(
-    (_: React.MouseEvent<HTMLElement>, value: SidebarMode) => {
-      setSidebarMode(value)
-    },
-    [],
-  )
+  const handleCreateTeamClick = (e: React.MouseEvent): void => {
+    setOpenTeamModal(true)
+  }
+
+  const handleChannelModalSubmit = (channelName: string): void => {
+    createChannel.mutate(
+      { requestBody: { channelName, teamId: teamId ?? '' } },
+      {
+        onSuccess: () => {
+          refetch()
+          setOpenChannelModal(false)
+        },
+      },
+    )
+  }
+
+  const handleTeamModalSubmit = (key: string, name: string): void => {
+    createTeam.mutate(
+      { requestBody: { license_key: key, teamName: name } },
+      {
+        onSuccess: () => {
+          refetchTeams()
+          setOpenTeamModal(false)
+        },
+      },
+    )
+  }
+
+  const currentTeam = getTeamById(teamId ?? '')
+
+  if (!currentTeam || !teamsList) {
+    return <Navigate to={Routes.Home} />
+  }
 
   return (
     <Main>
       <Header>
         <Title>WBChat</Title>
+        <Divider orientation='vertical' />
+        <Box display='flex' gap='12px' sx={{ overflowX: 'auto' }}>
+          {teamsList.map((team: TeamViewData) => {
+            return (
+              <Link to={`/team/${team._id}`}>
+                <Button
+                  variant='contained'
+                  color={teamId === team._id ? 'secondary' : undefined}
+                >
+                  {team.name}
+                </Button>
+              </Link>
+            )
+          })}
+          <Button variant='outlined' onClick={handleCreateTeamClick}>
+            Create team
+          </Button>
+        </Box>
+        <Divider orientation='vertical' />
         <Button variant='text' onClick={logout}>
           Logout
         </Button>
       </Header>
       <ContentBox>
         <Sidebar>
-          <ToggleButtonGroup
-            size='small'
-            exclusive
-            value={sidebarMode}
-            onChange={handleSidebarModeChange}
-          >
-            <ToggleButton value={SidebarMode.Channels}>
-              {SidebarMode.Channels}
-            </ToggleButton>
-            <ToggleButton value={SidebarMode.Direct} disabled>
-              {SidebarMode.Direct}
-            </ToggleButton>
-          </ToggleButtonGroup>
+          <Header>
+            <Typography fontWeight={700} fontSize={18}>
+              {currentTeam.name}
+            </Typography>
+          </Header>
           {channelsLoading ? (
             <CircularProgress sx={{ m: '16px auto' }} />
           ) : (
             <List>
               <ListGroup defaultExpanded>
                 <ListGroupSummary expandIcon={<ExpandMoreIcon />}>
-                  Common channels
+                  <Box
+                    display='flex'
+                    sx={{ width: '100%' }}
+                    justifyContent='space-between'
+                    alignItems='center'
+                  >
+                    channels
+                    <IconButton
+                      size='small'
+                      sx={{ borderRadius: '4px', p: '1px' }}
+                      onClick={handleAddChannelClick}
+                    >
+                      <AddIcon />
+                    </IconButton>
+                  </Box>
                 </ListGroupSummary>
                 <ListGroupDetails>
-                  {commonChannels?.map(channel => {
+                  {channelsData?.channels?.map(channel => {
                     return (
                       <Link
-                        to={`${Routes.Channel}/${channel._id}`}
+                        to={`team/${teamId}/channel/${channel._id}`}
                         key={channel._id}
                       >
                         <ChannelListItem active={channelId === channel._id}>
@@ -104,28 +187,6 @@ export const MainLayout: React.FC = () => {
                   })}
                 </ListGroupDetails>
               </ListGroup>
-
-              {activeChannels?.length ? (
-                <ListGroup defaultExpanded>
-                  <ListGroupSummary expandIcon={<ExpandMoreIcon />}>
-                    Active channels
-                  </ListGroupSummary>
-                  <ListGroupDetails>
-                    {activeChannels?.map(channel => {
-                      return (
-                        <Link
-                          to={`${Routes.Channel}/${channel._id}`}
-                          key={channel._id}
-                        >
-                          <ChannelListItem active={channelId === channel._id}>
-                            {channel.name}
-                          </ChannelListItem>
-                        </Link>
-                      )
-                    })}
-                  </ListGroupDetails>
-                </ListGroup>
-              ) : null}
             </List>
           )}
         </Sidebar>
@@ -133,6 +194,18 @@ export const MainLayout: React.FC = () => {
           <Outlet />
         </Container>
       </ContentBox>
+      <CreateChannelModal
+        open={openChannelModal}
+        handleClose={() => setOpenChannelModal(false)}
+        handleSubmit={handleChannelModalSubmit}
+        loading={createChannel.isLoading}
+      />
+      <CreateTeamModal
+        open={openTeamModal}
+        handleClose={() => setOpenTeamModal(false)}
+        handleSubmit={handleTeamModalSubmit}
+        loading={createTeam.isLoading}
+      />
     </Main>
   )
 }
