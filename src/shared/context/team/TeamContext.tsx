@@ -19,7 +19,7 @@ interface Props {
 }
 
 export const TeamProvider: React.FC<Props> = ({ children }) => {
-  const { data, isFetching, refetch, error } = useGetMyTeams()
+  const { data, isFetching, refetch } = useGetMyTeams()
 
   const getTeamById = useCallback(
     (teamId: string): TeamViewData | undefined => {
@@ -36,7 +36,7 @@ export const TeamProvider: React.FC<Props> = ({ children }) => {
     }
   }, [data, getTeamById])
 
-  if (isFetching && !error) {
+  if (isFetching) {
     return null
   }
 

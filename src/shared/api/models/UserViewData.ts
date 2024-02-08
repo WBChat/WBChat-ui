@@ -7,5 +7,6 @@ export type UserViewData = {
   username: string
   status: string
   avatar: string
+  email: string
   created: number
 }

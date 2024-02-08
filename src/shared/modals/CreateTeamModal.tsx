@@ -6,6 +6,7 @@ interface Props {
   open: boolean
   handleClose: () => void
   handleSubmit: (x: string, y: string) => void
+  emailSent?: string
   loading: boolean
 }
 
@@ -29,6 +30,7 @@ export const CreateTeamModal: React.FC<Props> = ({
   handleClose,
   loading,
   handleSubmit,
+  emailSent,
 }) => {
   const [name, setName] = useState('')
   const [key, setKey] = useState('')
@@ -44,9 +46,15 @@ export const CreateTeamModal: React.FC<Props> = ({
         <Typography id='modal-modal-title' variant='h5' component='h1'>
           Create channel
         </Typography>
-        <Typography id='modal-modal-title' variant='body1' component='h2'>
-          For team creation you should have lecense key
-        </Typography>
+        {emailSent ? (
+          <Typography id='modal-modal-title' variant='body1' component='h2'>
+            Lecense key was sent to this email: {emailSent}
+          </Typography>
+        ) : (
+          <Typography id='modal-modal-title' variant='body1' component='h2'>
+            For team creation you should have lecense key
+          </Typography>
+        )}
         <TextField
           type='text'
           placeholder='Google'

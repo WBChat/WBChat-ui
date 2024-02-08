@@ -8,4 +8,5 @@ export type UserViewData = {
   status: string
   avatar: string
   created: string
+  email: string
 }
