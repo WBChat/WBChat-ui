@@ -21,10 +21,9 @@ import {
 } from '@mui/material'
 import { useContext, useState } from 'react'
 import { useMutation, useQuery } from 'react-query'
-import { Link, Navigate, Outlet, useParams } from 'react-router-dom'
+import { Link, Navigate, Outlet, useNavigate, useParams } from 'react-router-dom'
 import { TeamContext } from 'src/shared/context/team/TeamContext'
 import { CreateChannelModal } from 'src/shared/modals'
-import { CreateTeamModal } from 'src/shared/modals/CreateTeamModal'
 
 import {
   ChannelListItem,
@@ -58,8 +57,9 @@ export const MainLayout: React.FC = () => {
 
   const { getTeamById, teamsList, refetchTeams } = useContext(TeamContext)
 
+  const navigate = useNavigate()
+
   const [openChannelModal, setOpenChannelModal] = useState(false)
-  const [openTeamModal, setOpenTeamModal] = useState(false)
 
   const {
     data: channelsData,
@@ -83,7 +83,7 @@ export const MainLayout: React.FC = () => {
   }
 
   const handleCreateTeamClick = (): void => {
-    setOpenTeamModal(true)
+    navigate(Routes.CreateTeam)
   }
 
   const handleChannelModalSubmit = (channelName: string): void => {
@@ -93,18 +93,6 @@ export const MainLayout: React.FC = () => {
         onSuccess: () => {
           refetch()
           setOpenChannelModal(false)
-        },
-      },
-    )
-  }
-
-  const handleTeamModalSubmit = (key: string, name: string): void => {
-    createTeam.mutate(
-      { requestBody: { license_key: key, teamName: name } },
-      {
-        onSuccess: () => {
-          refetchTeams()
-          setOpenTeamModal(false)
         },
       },
     )
@@ -199,12 +187,6 @@ export const MainLayout: React.FC = () => {
         handleClose={() => setOpenChannelModal(false)}
         handleSubmit={handleChannelModalSubmit}
         loading={createChannel.isLoading}
-      />
-      <CreateTeamModal
-        open={openTeamModal}
-        handleClose={() => setOpenTeamModal(false)}
-        handleSubmit={handleTeamModalSubmit}
-        loading={createTeam.isLoading}
       />
     </Main>
   )

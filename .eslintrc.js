@@ -32,6 +32,7 @@ module.exports = {
         ignoreStatic: true,
       },
     ],
+    "@typescript-eslint/require-await": "off",
     "consistent-return": "off",
     '@typescript-eslint/explicit-function-return-type': [
       'error',

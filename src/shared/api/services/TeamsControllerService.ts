@@ -70,4 +70,20 @@ export class TeamsControllerService {
       },
     })
   }
+
+  /**
+   * @returns any
+   * @throws ApiError
+   */
+  public static teamsControllerSendLicenseKey(): CancelablePromise<any> {
+    return __request(OpenAPI, {
+      method: 'POST',
+      url: '/api/teams/send_email/license_key',
+      errors: {
+        400: `Bad request`,
+        401: `Unauthorized`,
+        500: `Internal server error`,
+      },
+    })
+  }
 }

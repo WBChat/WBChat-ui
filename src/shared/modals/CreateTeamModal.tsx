@@ -1,6 +1,9 @@
+import LoadingButton from '@mui/lab/LoadingButton'
 import Button from '@mui/lab/LoadingButton'
 import { Box, Modal, TextField, Typography } from '@mui/material'
 import { useState } from 'react'
+import { useMutation } from 'react-query'
+import { TeamsControllerService } from '../api/services/TeamsControllerService'
 
 interface Props {
   open: boolean
@@ -32,8 +35,25 @@ export const CreateTeamModal: React.FC<Props> = ({
   handleSubmit,
   emailSent,
 }) => {
+  const sendEmailMutation = useMutation(
+    () =>
+      TeamsControllerService.teamsControllerSendLicenseKey(),
+  )
+
   const [name, setName] = useState('')
   const [key, setKey] = useState('')
+
+  const [isEmailSent, setIsEmailSent] = useState(false)
+  const [emailSending, setEmailSending] = useState(false)
+
+  const handleGetKey = (): void => {
+    setEmailSending(true)
+    sendEmailMutation.mutateAsync().then(() => {
+      setIsEmailSent(true)
+    }).finally(() => {
+      setEmailSending(false)
+    })
+  }
 
   return (
     <Modal
@@ -44,16 +64,20 @@ export const CreateTeamModal: React.FC<Props> = ({
     >
       <Box sx={style}>
         <Typography id='modal-modal-title' variant='h5' component='h1'>
-          Create channel
+          Create team
         </Typography>
-        {emailSent ? (
+        {isEmailSent ? (
           <Typography id='modal-modal-title' variant='body1' component='h2'>
-            Lecense key was sent to this email: {emailSent}
+            License key was sent to this email: {emailSent}
           </Typography>
         ) : (
-          <Typography id='modal-modal-title' variant='body1' component='h2'>
-            For team creation you should have lecense key
-          </Typography>
+          <Box sx={{ display: 'flex'}}>
+            <Typography id='modal-modal-title' variant='body1' component='h2'>
+              For team creation you should have license key
+            </Typography>
+            <LoadingButton onClick={handleGetKey} variant='contained' loading={emailSending}>send key</LoadingButton>
+          </Box>
+          
         )}
         <TextField
           type='text'

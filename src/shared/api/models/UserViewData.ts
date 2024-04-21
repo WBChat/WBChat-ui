@@ -4,9 +4,9 @@
 
 export type UserViewData = {
   _id: string
+  email: string
   username: string
   status: string
   avatar: string
-  email: string
   created: number
 }

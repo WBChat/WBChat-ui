@@ -1,17 +1,18 @@
-import { TeamViewData } from '@api'
+import { TeamListResponse, TeamViewData } from '@api'
 import { useGetMyTeams } from '@queries'
 import { createContext, useCallback, useMemo } from 'react'
+import { QueryObserverResult } from 'react-query'
 
 interface ContextType {
   teamsList?: TeamViewData[]
   getTeamById: (teamId: string) => TeamViewData | undefined
-  refetchTeams: () => void
+  refetchTeams: () => Promise<QueryObserverResult<TeamListResponse, unknown>>
 }
 
 export const TeamContext = createContext<ContextType>({
   teamsList: undefined,
   getTeamById: () => undefined,
-  refetchTeams: () => {},
+  refetchTeams: async () => ({}) as QueryObserverResult<TeamListResponse, unknown>,
 })
 
 interface Props {

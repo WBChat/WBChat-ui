@@ -1,4 +1,4 @@
-import { SuccessResponse, TCreateTeamData, TeamsControllerService } from '@api'
+import { TCreateTeamData, TeamsControllerService } from '@api'
 import { CommonError } from '@commonTypes/errorTypes'
 import {
   Box,
@@ -9,27 +9,33 @@ import {
   Typography,
 } from '@mui/material'
 import { useGetCurrentUser } from '@queries'
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { useMutation } from 'react-query'
+import { useNavigate } from 'react-router-dom'
+import { TeamContext } from 'src/shared/context/team/TeamContext'
 import { CreateTeamModal } from 'src/shared/modals/CreateTeamModal'
 
 export const Plans: React.FC = () => {
+  const { refetchTeams } = useContext(TeamContext)
   const [openModal, setOpenModal] = useState(false)
 
   const createTeam = useMutation<
-    SuccessResponse,
+    string,
     CommonError,
     { requestBody: TCreateTeamData }
   >('create_team', TeamsControllerService.teamsControllerCreateTeam)
 
   const { data: user } = useGetCurrentUser()
+  const navigate = useNavigate()
 
   const handleTeamModalSubmit = (key: string, name: string): void => {
     createTeam.mutate(
       { requestBody: { license_key: key, teamName: name } },
       {
-        onSuccess: () => {
+        onSuccess: async (teamId) => {
           setOpenModal(false)
+          await refetchTeams()
+          navigate(`/team/${teamId}`)
         },
       },
     )
