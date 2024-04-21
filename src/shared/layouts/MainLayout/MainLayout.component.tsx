@@ -2,9 +2,7 @@ import {
   ChannelsControllerService,
   SuccessResponse,
   TCreateChannelData,
-  TCreateTeamData,
   TeamViewData,
-  TeamsControllerService,
 } from '@api'
 import { CommonError } from '@commonTypes/errorTypes'
 import { Routes } from '@constants'
@@ -49,13 +47,7 @@ export const MainLayout: React.FC = () => {
     { requestBody: TCreateChannelData }
   >('create_channel', ChannelsControllerService.channelsControllerCreateChannel)
 
-  const createTeam = useMutation<
-    SuccessResponse,
-    CommonError,
-    { requestBody: TCreateTeamData }
-  >('create_team', TeamsControllerService.teamsControllerCreateTeam)
-
-  const { getTeamById, teamsList, refetchTeams } = useContext(TeamContext)
+  const { getTeamById, teamsList } = useContext(TeamContext)
 
   const navigate = useNavigate()
 
