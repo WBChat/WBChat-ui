@@ -8,16 +8,9 @@ import ReactDOM from 'react-dom/client'
 import { QueryClient, QueryClientProvider } from 'react-query'
 
 import { App } from './App'
-import { TeamProvider } from './shared/context/team/TeamContext'
 
 const root = ReactDOM.createRoot(document.getElementById('root')!)
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      cacheTime: 0,
-    }
-  }
-})
+const queryClient = new QueryClient()
 
 OpenAPI.BASE = process.env.REACT_APP_API_URL!
 
@@ -26,10 +19,8 @@ root.render(
     <ThemeProvider theme={theme}>
       <AuthProvider>
         <SocketProvider>
-          <TeamProvider>
             <GlobalStyles />
             <App />
-          </TeamProvider>
         </SocketProvider>
       </AuthProvider>
     </ThemeProvider>

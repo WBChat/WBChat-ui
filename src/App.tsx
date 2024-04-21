@@ -5,6 +5,7 @@ import React, { useContext } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 
 import { Channel } from './components/Channel/Channel.component'
+import { TeamProvider } from './shared/context/team/TeamContext'
 import { Home } from './components/Home'
 import { Login } from './components/Login'
 import { Registration } from './components/Registration'
@@ -24,16 +25,19 @@ export const App: React.FC = () => {
           <Route path='*' element={<Navigate to={Paths.Login} />} />
         </Routes>
       ) : (
-        <Routes>
-          <Route path={Paths.Home} element={<Home />} />
-          <Route path={Paths.CreateTeam} element={<NoTeams />} />
-          <Route path='' element={<MainLayout />}>
-            <Route path={Paths.Team} element={<Team />} />
-            <Route path={Paths.ChannelParams} element={<Channel />} />
-          </Route>
+        <TeamProvider>
+          <Routes>
+            <Route path={Paths.Home} element={<Home />} />
+            <Route path={Paths.CreateTeam} element={<NoTeams />} />
+            <Route path='' element={<MainLayout />}>
+              <Route path={Paths.Team} element={<Team />} />
+              <Route path={Paths.ChannelParams} element={<Channel />} />
+            </Route>
 
-          <Route path='*' element={<Navigate to={Paths.Home} />} />
-        </Routes>
+            <Route path='*' element={<Navigate to={Paths.Home} />} />
+          </Routes>
+        </TeamProvider>
+        
       )}
     </BrowserRouter>
   )
