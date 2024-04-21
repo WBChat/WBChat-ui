@@ -11,7 +11,13 @@ import { App } from './App'
 import { TeamProvider } from './shared/context/team/TeamContext'
 
 const root = ReactDOM.createRoot(document.getElementById('root')!)
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      cacheTime: 0,
+    }
+  }
+})
 
 OpenAPI.BASE = process.env.REACT_APP_API_URL!
 
