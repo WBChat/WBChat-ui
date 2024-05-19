@@ -1,14 +1,12 @@
 /* istanbul ignore file */
-
 /* tslint:disable */
-
 /* eslint-disable */
+import type { FilterModel } from '../models/FilterModel'
+import type { Message } from '../models/Message'
+
 import type { CancelablePromise } from '../core/CancelablePromise'
 import { OpenAPI } from '../core/OpenAPI'
 import { request as __request } from '../core/request'
-import type { FilterModel } from '../models/FilterModel'
-import type { Message } from '../models/Message'
-import type { SearchModel } from '../models/SearchModel'
 
 export class MessagesControllerService {
   /**
@@ -20,13 +18,15 @@ export class MessagesControllerService {
     page,
     pageSize,
     filter,
-    search,
+    searchValue,
+    searchFields,
   }: {
     channelId: string
     page?: number
     pageSize?: number
     filter?: Array<FilterModel>
-    search?: SearchModel
+    searchValue?: string
+    searchFields?: Array<string>
   }): CancelablePromise<Array<Message>> {
     return __request(OpenAPI, {
       method: 'GET',
@@ -36,7 +36,8 @@ export class MessagesControllerService {
         page: page,
         pageSize: pageSize,
         filter: filter,
-        search: search,
+        searchValue: searchValue,
+        searchFields: searchFields,
       },
       errors: {
         400: `Bad request`,

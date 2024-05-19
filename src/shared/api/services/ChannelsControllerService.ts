@@ -1,15 +1,14 @@
 /* istanbul ignore file */
-
 /* tslint:disable */
-
 /* eslint-disable */
-import type { CancelablePromise } from '../core/CancelablePromise'
-import { OpenAPI } from '../core/OpenAPI'
-import { request as __request } from '../core/request'
 import type { ChannelListResponse } from '../models/ChannelListResponse'
 import type { ChannelViewData } from '../models/ChannelViewData'
 import type { SuccessResponse } from '../models/SuccessResponse'
 import type { TCreateChannelData } from '../models/TCreateChannelData'
+
+import type { CancelablePromise } from '../core/CancelablePromise'
+import { OpenAPI } from '../core/OpenAPI'
+import { request as __request } from '../core/request'
 
 export class ChannelsControllerService {
   /**

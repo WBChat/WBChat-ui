@@ -1,15 +1,13 @@
 /* istanbul ignore file */
-
 /* tslint:disable */
-
 /* eslint-disable */
+import type { FilterModel } from '../models/FilterModel'
+import type { UsersListResponse } from '../models/UsersListResponse'
+import type { UserViewData } from '../models/UserViewData'
+
 import type { CancelablePromise } from '../core/CancelablePromise'
 import { OpenAPI } from '../core/OpenAPI'
 import { request as __request } from '../core/request'
-import type { FilterModel } from '../models/FilterModel'
-import type { SearchModel } from '../models/SearchModel'
-import type { UserViewData } from '../models/UserViewData'
-import type { UsersListResponse } from '../models/UsersListResponse'
 
 export class UsersControllerService {
   /**
@@ -21,13 +19,15 @@ export class UsersControllerService {
     page,
     pageSize,
     filter,
-    search,
+    searchValue,
+    searchFields,
   }: {
     direct?: boolean
     page?: number
     pageSize?: number
     filter?: Array<FilterModel>
-    search?: SearchModel
+    searchValue?: string
+    searchFields?: Array<string>
   }): CancelablePromise<UsersListResponse> {
     return __request(OpenAPI, {
       method: 'GET',
@@ -37,7 +37,8 @@ export class UsersControllerService {
         page: page,
         pageSize: pageSize,
         filter: filter,
-        search: search,
+        searchValue: searchValue,
+        searchFields: searchFields,
       },
       errors: {
         400: `Bad request`,

@@ -4,5 +4,6 @@
 
 export type TeamViewData = {
   _id: string
+  owner: string
   name: string
 }

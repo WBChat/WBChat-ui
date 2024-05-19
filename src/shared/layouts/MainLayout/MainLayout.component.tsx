@@ -3,25 +3,42 @@ import {
   SuccessResponse,
   TCreateChannelData,
   TeamViewData,
+  TeamsControllerService,
 } from '@api'
+import { useGetCurrentUser } from '@queries'
 import { CommonError } from '@commonTypes/errorTypes'
 import { Routes } from '@constants'
 import { AuthContext } from '@context'
 import AddIcon from '@mui/icons-material/Add'
+import ExitToAppIcon from '@mui/icons-material/ExitToApp'
+import DeleteIcon from '@mui/icons-material/Delete'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import ViewListIcon from '@mui/icons-material/ViewList'
 import {
   Box,
   Button,
   CircularProgress,
   Divider,
   IconButton,
+  Menu,
+  MenuItem,
   Typography,
 } from '@mui/material'
-import { useContext, useState } from 'react'
+import { useContext, useRef, useState } from 'react'
 import { useMutation, useQuery } from 'react-query'
-import { Link, Navigate, Outlet, useNavigate, useParams } from 'react-router-dom'
+import {
+  Link,
+  Navigate,
+  Outlet,
+  useNavigate,
+  useParams,
+} from 'react-router-dom'
 import { TeamContext } from 'src/shared/context/team/TeamContext'
-import { CreateChannelModal } from 'src/shared/modals'
+import {
+  AddMembersModal,
+  CreateChannelModal,
+  ViewMembersModal,
+} from 'src/shared/modals'
 
 import {
   ChannelListItem,
@@ -41,17 +58,54 @@ export const MainLayout: React.FC = () => {
   const { logout } = useContext(AuthContext)
   const { channelId, teamId } = useParams()
 
+  const { getTeamById, teamsList, refetchTeams } = useContext(TeamContext)
+
+  const currentUser = useGetCurrentUser()
+  const [expanded, setExpanded] = useState(false)
+
+  const teamExpandRef = useRef<HTMLDivElement>(null)
+
   const createChannel = useMutation<
     SuccessResponse,
     CommonError,
     { requestBody: TCreateChannelData }
   >('create_channel', ChannelsControllerService.channelsControllerCreateChannel)
 
-  const { getTeamById, teamsList } = useContext(TeamContext)
+  const deleteTeam = useMutation<SuccessResponse, CommonError>(
+    ['delete_team', teamId],
+    () => TeamsControllerService.teamsControllerDeleteTeam({ teamId }),
+  )
+
+  const leaveTeam = useMutation<SuccessResponse, CommonError>(
+    ['leave_team', teamId, currentUser.data?._id],
+    () =>
+      TeamsControllerService.teamsControllerRemoveTeamMember({
+        teamId,
+        memberId: currentUser.data?._id,
+      }),
+  )
+
+  const handleDeleteTeam = async (): Promise<void> => {
+    deleteTeam.mutate({} as unknown as void, {
+      onSuccess: () => {
+        refetchTeams()
+      },
+    })
+  }
+
+  const handleLeaveTeam = async (): Promise<void> => {
+    leaveTeam.mutate({} as unknown as void, {
+      onSuccess: () => {
+        refetchTeams()
+      },
+    })
+  }
 
   const navigate = useNavigate()
 
   const [openChannelModal, setOpenChannelModal] = useState(false)
+  const [openMembersModal, setOpenMembersModal] = useState(false)
+  const [openAddMembersModal, setOpenAddMembersModal] = useState(false)
 
   const {
     data: channelsData,
@@ -104,7 +158,7 @@ export const MainLayout: React.FC = () => {
         <Box display='flex' gap='12px' sx={{ overflowX: 'auto' }}>
           {teamsList.map((team: TeamViewData) => {
             return (
-              <Link to={`/team/${team._id}`}>
+              <Link to={`/team/${team._id}`} key={team._id}>
                 <Button
                   variant='contained'
                   color={teamId === team._id ? 'secondary' : undefined}
@@ -129,6 +183,60 @@ export const MainLayout: React.FC = () => {
             <Typography fontWeight={700} fontSize={18}>
               {currentTeam.name}
             </Typography>
+            <div ref={teamExpandRef}>
+              <ExpandMoreIcon
+                sx={{ cursor: 'pointer' }}
+                onClick={() => setExpanded(!expanded)}
+              />
+            </div>
+
+            <Menu
+              open={expanded}
+              onClose={() => setExpanded(false)}
+              anchorEl={() => teamExpandRef.current!}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'right',
+              }}
+              sx={{ marginLeft: '20px', mt: '5px' }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+            >
+              <MenuItem
+                sx={{ display: 'flex', gap: 1 }}
+                onClick={() => setOpenMembersModal(true)}
+              >
+                <ViewListIcon />
+                View members
+              </MenuItem>
+              <MenuItem
+                sx={{ display: 'flex', gap: 1 }}
+                onClick={() => setOpenAddMembersModal(true)}
+              >
+                <AddIcon />
+                Add members
+              </MenuItem>
+              <Divider sx={{ my: 0.5 }} />
+              {currentTeam.owner !== currentUser.data?._id ? (
+                <MenuItem
+                  sx={{ display: 'flex', gap: 1 }}
+                  onClick={handleLeaveTeam}
+                >
+                  <ExitToAppIcon color='error' />
+                  <Typography color='error'>Leave team</Typography>
+                </MenuItem>
+              ) : (
+                <MenuItem
+                  sx={{ display: 'flex', gap: 1 }}
+                  onClick={handleDeleteTeam}
+                >
+                  <DeleteIcon color='error' />
+                  <Typography color='error'>Delete team</Typography>
+                </MenuItem>
+              )}
+            </Menu>
           </Header>
           {channelsLoading ? (
             <CircularProgress sx={{ m: '16px auto' }} />
@@ -179,6 +287,14 @@ export const MainLayout: React.FC = () => {
         handleClose={() => setOpenChannelModal(false)}
         handleSubmit={handleChannelModalSubmit}
         loading={createChannel.isLoading}
+      />
+      <ViewMembersModal
+        open={openMembersModal}
+        handleClose={() => setOpenMembersModal(false)}
+      />
+      <AddMembersModal
+        open={openAddMembersModal}
+        handleClose={() => setOpenAddMembersModal(false)}
       />
     </Main>
   )
