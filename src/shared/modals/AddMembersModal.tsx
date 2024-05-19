@@ -10,12 +10,11 @@ import {
 import { useMutation } from 'react-query'
 import { AddCircleOutline } from '@mui/icons-material'
 import { useDebounce } from 'use-debounce'
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { CommonError } from '@commonTypes/errorTypes'
 import { UserSuggestion } from 'src/components/UserSuggestion'
 import { useGetPeople, useGetTeamMembers } from '../queries/useGetMembers'
-import { TeamContext } from '../context/team/TeamContext'
 import { SuccessResponse } from '../api/models/SuccessResponse'
 import { TeamsControllerService } from '../api/services/TeamsControllerService'
 
@@ -45,7 +44,6 @@ export const AddMembersModal: React.FC<Props> = ({ open, handleClose }) => {
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
   const { teamId } = useParams()
-  const { getTeamById } = useContext(TeamContext)
 
   const { data: teamMembers, refetch: refetchTeamMembers } = useGetTeamMembers({
     teamId: teamId!,
