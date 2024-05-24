@@ -286,6 +286,7 @@ export const useWebRtc = (): Result => {
 
   useEffect(() => {
     return () => {
+      localStream.current.getTracks().forEach(track => track.stop());
       Object.values(peerConnections.current).forEach(peer => peer.close())
     }
   }, [])

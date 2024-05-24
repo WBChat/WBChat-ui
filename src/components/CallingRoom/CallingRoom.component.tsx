@@ -153,6 +153,7 @@ export const CallingRoom: React.FC = () => {
                   width={videoElementSize.width}
                   style={{
                     display: isRemoteVideosMuted[user._id] ? 'none' : 'block',
+                    transform: 'scaleX(-1)',
                   }}
                   muted={user._id === currentUser?._id}
                   autoPlay

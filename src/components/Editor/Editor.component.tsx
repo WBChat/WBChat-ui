@@ -17,8 +17,10 @@ export const Editor: React.FC<EditorProps> = ({ onSend }) => {
   }
 
   const handleSubmit = (value: string): void => {
-    onSend(value)
-    setText('')
+    if (value.trim()) {
+      onSend(value)
+      setText('')
+    }
   }
 
   return (
@@ -50,7 +52,7 @@ export const Editor: React.FC<EditorProps> = ({ onSend }) => {
             editor.on('keydown', e => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault()
-                handleSubmit(editor.getContent())
+                handleSubmit(editor.getContent().trim())
               }
             })
           },
