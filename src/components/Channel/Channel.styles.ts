@@ -9,6 +9,9 @@ export const ChannelContainer = styled.div`
 export const ChannelHeader = styled.div`
   padding: 12px 24px;
   border-bottom: 1px solid #383A3D;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 `
 
 export const ChannelTitle = styled.span`

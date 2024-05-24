@@ -176,7 +176,7 @@ export const Registration: React.FC = () => {
               />
             </FormBox>
           </Form>
-          <ErrorField>{mutation.error?.body.message ?? ''}</ErrorField>
+          <ErrorField>{mutation.error?.message ?? ''}</ErrorField>
           <LoadingButton
             loading={mutation.isLoading}
             onClick={handleRegister}

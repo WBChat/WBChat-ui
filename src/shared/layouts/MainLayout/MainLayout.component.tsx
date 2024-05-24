@@ -77,11 +77,11 @@ export const MainLayout: React.FC = () => {
   )
 
   const leaveTeam = useMutation<SuccessResponse, CommonError>(
-    ['leave_team', teamId, currentUser.data?._id],
+    ['leave_team', teamId, currentUser?._id],
     () =>
       TeamsControllerService.teamsControllerRemoveTeamMember({
         teamId,
-        memberId: currentUser.data?._id,
+        memberId: currentUser?._id,
       }),
   )
 
@@ -219,7 +219,7 @@ export const MainLayout: React.FC = () => {
                 Add members
               </MenuItem>
               <Divider sx={{ my: 0.5 }} />
-              {currentTeam.owner !== currentUser.data?._id ? (
+              {currentTeam.owner !== currentUser?._id ? (
                 <MenuItem
                   sx={{ display: 'flex', gap: 1 }}
                   onClick={handleLeaveTeam}

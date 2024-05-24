@@ -4,17 +4,26 @@ import { Container } from './Avatar.styles'
 
 interface AvatarProps {
   url?: string
-  size: number
+  size?: number
+  fullSize?: boolean
+  fontSize?: string
   username: string
 }
 
-export const Avatar: React.FC<AvatarProps> = ({ url, username, size }) => {
+export const Avatar: React.FC<AvatarProps> = ({
+  url,
+  username,
+  size,
+  fontSize,
+  fullSize,
+}) => {
   if (!url) {
     return (
       <Container
         style={{
-          width: `${size}px`,
-          height: `${size}px`,
+          width: fullSize ? '100%' : `${size}px`,
+          height: fullSize ? '100%' : `${size}px`,
+          fontSize: fontSize ?? undefined,
           background: stringToColor(username),
         }}
       >

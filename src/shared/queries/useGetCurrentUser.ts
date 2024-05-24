@@ -1,9 +1,9 @@
-import { UseQueryResult, useQuery } from "react-query"
+import { useQuery } from "react-query"
 import { UsersControllerService, UserViewData } from "@api"
 import { useContext } from "react";
 import { AuthContext } from "../context/auth/AuthContext";
 
-export const useGetCurrentUser = (): UseQueryResult<UserViewData> => {
+export const useGetCurrentUser = (): (UserViewData | undefined) => {
     const { userId } = useContext(AuthContext)
 
     const query = useQuery(
@@ -17,5 +17,5 @@ export const useGetCurrentUser = (): UseQueryResult<UserViewData> => {
         },
       )
 
-    return query
+    return query.data
 }

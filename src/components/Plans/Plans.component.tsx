@@ -25,14 +25,14 @@ export const Plans: React.FC = () => {
     { requestBody: TCreateTeamData }
   >('create_team', TeamsControllerService.teamsControllerCreateTeam)
 
-  const { data: user } = useGetCurrentUser()
+  const user = useGetCurrentUser()
   const navigate = useNavigate()
 
   const handleTeamModalSubmit = (key: string, name: string): void => {
     createTeam.mutate(
       { requestBody: { license_key: key, teamName: name } },
       {
-        onSuccess: async (teamId) => {
+        onSuccess: async teamId => {
           setOpenModal(false)
           await refetchTeams()
           navigate(`/team/${teamId}`)

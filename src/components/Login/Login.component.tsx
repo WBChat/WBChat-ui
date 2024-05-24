@@ -93,7 +93,7 @@ export const Login: React.FC = () => {
             />
           </Form>
 
-          <ErrorField>{mutation.error?.body.message ?? ''}</ErrorField>
+          <ErrorField>{mutation.error?.message ?? ''}</ErrorField>
 
           <LoadingButton
             loading={mutation.isLoading}

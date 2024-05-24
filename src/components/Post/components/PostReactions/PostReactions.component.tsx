@@ -12,7 +12,7 @@ export const PostReactions: React.FC<Props> = ({
   reactions,
   onReactionClick,
 }) => {
-  const { data: user } = useGetCurrentUser()
+  const user = useGetCurrentUser()
 
   return (
     <Container>

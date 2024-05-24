@@ -1,10 +1,11 @@
 import { Message } from '@api'
 import { ReactionsWithUserNames } from '@commonTypes/channelTypes'
+import { CallMissedOutgoingOutlined } from '@mui/icons-material'
 import { SocketContext } from '@context'
-import { Box, CircularProgress, useEventCallback } from '@mui/material'
+import { Box, Button, CircularProgress, useEventCallback } from '@mui/material'
 import { useGetChannel, useGetMembers, useGetMessages } from '@queries'
 import { useCallback, useContext, useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import { Editor } from '../Editor/Editor.component'
 import { Post } from '../Post/Post.components'
@@ -19,6 +20,8 @@ import {
 export const Channel: React.FC = () => {
   const { socket } = useContext(SocketContext)
   const { channelId } = useParams()
+
+  const navigate = useNavigate()
 
   const [posts, setPosts] = useState<Message[]>([])
 
@@ -115,6 +118,14 @@ export const Channel: React.FC = () => {
     <ChannelContainer>
       <ChannelHeader>
         <ChannelTitle>{channelInfo?.name}</ChannelTitle>
+        <Button
+          variant='outlined'
+          size='small'
+          startIcon={<CallMissedOutgoingOutlined />}
+          onClick={() => navigate(`${window.location.pathname}/calling_room`)}
+        >
+          Calling room
+        </Button>
       </ChannelHeader>
       {isFetching || isMembersFetching ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
