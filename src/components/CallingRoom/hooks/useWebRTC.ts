@@ -40,7 +40,7 @@ export const useWebRtc = (): Result => {
 
   const createPeer = (userId: string, socketId: string): RTCPeerConnection => {
     const peerConnection = new RTCPeerConnection({
-      iceServers: [{ urls: 'stun:stun.stunprotocol.org' }],
+      iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
     })
 
     peerConnection.ontrack = event => {
