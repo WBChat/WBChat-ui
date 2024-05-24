@@ -1,7 +1,9 @@
 import { TeamListResponse, TeamViewData } from '@api'
+import { CircularProgress } from '@mui/material'
 import { useGetMyTeams } from '@queries'
 import { createContext, useCallback, useMemo } from 'react'
 import { QueryObserverResult } from 'react-query'
+import { Container } from 'src/shared/layouts/MainLayout/MainLayout.styles'
 
 interface ContextType {
   teamsList?: TeamViewData[]
@@ -12,7 +14,8 @@ interface ContextType {
 export const TeamContext = createContext<ContextType>({
   teamsList: undefined,
   getTeamById: () => undefined,
-  refetchTeams: async () => ({}) as QueryObserverResult<TeamListResponse, unknown>,
+  refetchTeams: async () =>
+    ({}) as QueryObserverResult<TeamListResponse, unknown>,
 })
 
 interface Props {
@@ -38,7 +41,18 @@ export const TeamProvider: React.FC<Props> = ({ children }) => {
   }, [data, getTeamById])
 
   if (isFetching) {
-    return null
+    return (
+      <Container
+        style={{
+          height: '100vh',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <CircularProgress size={64} />
+      </Container>
+    )
   }
 
   return <TeamContext.Provider value={value}>{children}</TeamContext.Provider>

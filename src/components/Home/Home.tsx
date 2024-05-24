@@ -8,7 +8,7 @@ export const Home: React.FC = () => {
   const { teamsList } = useContext(TeamContext)
 
   if (teamsList === undefined || !teamsList.length) {
-    return <Navigate to={Routes.CreateTeam} />
+    return <Navigate to={Routes.NoTeams} />
   }
 
   return <Navigate to={`/team/${teamsList[0]._id}/`} />

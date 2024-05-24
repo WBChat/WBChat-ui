@@ -1,9 +1,11 @@
 import Button from '@mui/lab/LoadingButton'
 import { Box, Modal, TextField, Typography } from '@mui/material'
 import { useState } from 'react'
+import { ErrorField } from 'src/components/Login/Login.styles'
 
 interface Props {
   open: boolean
+  error?: string
   handleClose: () => void
   handleSubmit: (x: string) => void
   loading: boolean
@@ -28,6 +30,7 @@ export const CreateChannelModal: React.FC<Props> = ({
   open,
   handleClose,
   loading,
+  error,
   handleSubmit,
 }) => {
   const [name, setName] = useState('')
@@ -50,6 +53,7 @@ export const CreateChannelModal: React.FC<Props> = ({
           value={name}
           onChange={e => setName(e.target.value)}
         />
+        {error && <ErrorField style={{ padding: 0 }}>{error ?? ''}</ErrorField>}
         <Button
           sx={{ width: '100%' }}
           variant='contained'

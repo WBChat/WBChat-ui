@@ -154,6 +154,7 @@ export const CallingRoom: React.FC = () => {
                   style={{
                     display: isRemoteVideosMuted[user._id] ? 'none' : 'block',
                   }}
+                  muted={user._id === currentUser?._id}
                   autoPlay
                   playsInline
                 />

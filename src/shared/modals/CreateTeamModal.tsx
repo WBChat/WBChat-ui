@@ -1,5 +1,6 @@
 import LoadingButton from '@mui/lab/LoadingButton'
 import Button from '@mui/lab/LoadingButton'
+import { ErrorField } from 'src/components/Login/Login.styles'
 import { Box, Modal, TextField, Typography } from '@mui/material'
 import { useState } from 'react'
 import { useMutation } from 'react-query'
@@ -7,6 +8,7 @@ import { TeamsControllerService } from '../api/services/TeamsControllerService'
 
 interface Props {
   open: boolean
+  error?: string
   handleClose: () => void
   handleSubmit: (x: string, y: string) => void
   emailSent?: string
@@ -32,12 +34,12 @@ export const CreateTeamModal: React.FC<Props> = ({
   open,
   handleClose,
   loading,
+  error,
   handleSubmit,
   emailSent,
 }) => {
-  const sendEmailMutation = useMutation(
-    () =>
-      TeamsControllerService.teamsControllerSendLicenseKey(),
+  const sendEmailMutation = useMutation(() =>
+    TeamsControllerService.teamsControllerSendLicenseKey(),
   )
 
   const [name, setName] = useState('')
@@ -48,11 +50,14 @@ export const CreateTeamModal: React.FC<Props> = ({
 
   const handleGetKey = (): void => {
     setEmailSending(true)
-    sendEmailMutation.mutateAsync().then(() => {
-      setIsEmailSent(true)
-    }).finally(() => {
-      setEmailSending(false)
-    })
+    sendEmailMutation
+      .mutateAsync()
+      .then(() => {
+        setIsEmailSent(true)
+      })
+      .finally(() => {
+        setEmailSending(false)
+      })
   }
 
   return (
@@ -71,13 +76,18 @@ export const CreateTeamModal: React.FC<Props> = ({
             License key was sent to this email: {emailSent}
           </Typography>
         ) : (
-          <Box sx={{ display: 'flex'}}>
+          <Box sx={{ display: 'flex' }}>
             <Typography id='modal-modal-title' variant='body1' component='h2'>
               For team creation you should have license key
             </Typography>
-            <LoadingButton onClick={handleGetKey} variant='contained' loading={emailSending}>send key</LoadingButton>
+            <LoadingButton
+              onClick={handleGetKey}
+              variant='contained'
+              loading={emailSending}
+            >
+              send key
+            </LoadingButton>
           </Box>
-          
         )}
         <TextField
           type='text'
@@ -93,6 +103,7 @@ export const CreateTeamModal: React.FC<Props> = ({
           value={key}
           onChange={e => setKey(e.target.value)}
         />
+        {error && <ErrorField style={{ padding: 0 }}>{error ?? ''}</ErrorField>}
         <Button
           sx={{ width: '100%' }}
           variant='contained'

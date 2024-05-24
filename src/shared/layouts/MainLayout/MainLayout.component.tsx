@@ -287,6 +287,7 @@ export const MainLayout: React.FC = () => {
         handleClose={() => setOpenChannelModal(false)}
         handleSubmit={handleChannelModalSubmit}
         loading={createChannel.isLoading}
+        error={createChannel.error?.body?.message}
       />
       <ViewMembersModal
         open={openMembersModal}

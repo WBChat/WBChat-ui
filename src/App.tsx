@@ -12,6 +12,7 @@ import { Registration } from './components/Registration'
 import { Team } from './components/Team'
 import { NoTeams } from './components/NoTeams/NoTeams.component'
 import { CallingRoom } from './components/CallingRoom/CallingRoom.component'
+import { CreateTeams } from './components/NoTeams/CreateTeams.component'
 
 export const App: React.FC = () => {
   const { isAuth } = useContext(AuthContext)
@@ -30,7 +31,8 @@ export const App: React.FC = () => {
           <Routes>
             <Route path={Paths.Home} element={<Home />} />
             <Route path={Paths.CallingRoom} element={<CallingRoom />} />
-            <Route path={Paths.CreateTeam} element={<NoTeams />} />
+            <Route path={Paths.CreateTeam} element={<CreateTeams />} />
+            <Route path={Paths.NoTeams} element={<NoTeams />} />
             <Route path='' element={<MainLayout />}>
               <Route path={Paths.Team} element={<Team />} />
               <Route path={Paths.ChannelParams} element={<Channel />} />

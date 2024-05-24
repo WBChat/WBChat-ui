@@ -116,6 +116,7 @@ export const Plans: React.FC = () => {
         handleClose={() => setOpenModal(false)}
         handleSubmit={handleTeamModalSubmit}
         loading={createTeam.isLoading}
+        error={createTeam.error?.body?.message}
       />
     </Box>
   )
