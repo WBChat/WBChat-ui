@@ -242,7 +242,7 @@ export const Post: React.FC<PostProps> = ({
               display: 'flex',
               flexWrap: 'wrap',
               gap: 1,
-              height: `${Math.ceil(files.length / filesLineCount) * 64}px`,
+              height: `${Math.ceil(files.length / filesLineCount) * 50}px`,
             }}
           >
             {filesInfo?.map(file => {

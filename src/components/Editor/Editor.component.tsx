@@ -250,6 +250,7 @@ export const Editor: React.FC<EditorProps> = ({
               filename={file.name}
               ext={file.ext}
               onAction={() => {
+                setProgress(prev => prev.filter(i => i !== key))
                 setFiles(prev => {
                   delete prev[key]
 
