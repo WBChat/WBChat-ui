@@ -1,5 +1,5 @@
 import { UseQueryResult, useQuery } from "react-query"
-import { MessagesControllerService, Message } from "@api"
+import { MessagesControllerService, Message, AttachmentsService, GetFilesByIdsResponse } from "@api"
 
 interface Props {
     channelId: string;
@@ -21,4 +21,22 @@ export const useGetMessages = (props: Props): UseQueryResult => {
       )
 
     return query
+}
+
+export const usePostFiles = (props: {ids: string[]}): UseQueryResult<GetFilesByIdsResponse[]> => {
+  const query = useQuery(
+      ['get-post-files', props.ids],
+      () => {
+        if (!props.ids.length) {
+          return []
+        }
+        
+        return AttachmentsService.filesControllerGetFiles({ ids: props.ids })
+      },
+      {
+        refetchOnWindowFocus: false,
+      },
+    )
+
+  return query
 }

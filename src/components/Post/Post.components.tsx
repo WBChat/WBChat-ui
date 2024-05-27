@@ -1,16 +1,19 @@
 /* eslint-disable react/no-danger */
 import { UserViewData } from '@api'
+import axios from 'axios'
 import { ReactionsWithUserNames } from '@commonTypes/channelTypes'
+import { usePostFiles } from '@queries'
+import { Box } from '@mui/material'
 import { AuthContext, SocketContext } from '@context'
 import { EmojiClickData } from 'emoji-picker-react'
 import jwt_decode from 'jwt-decode'
+import { EditingMessageContext } from 'src/shared/context/editingMessage/EditingMessageContext'
 import { DateTime } from 'luxon'
 import {
-  ChangeEvent,
-  KeyboardEvent,
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react'
@@ -21,18 +24,20 @@ import {
   PostContainer,
   Settings,
   Text,
-  TextField,
   Time,
   Username,
 } from './Post.styles'
 import { DotMenu } from './components/DotMenu/DotMenu.component'
 import { EmojiPicker } from './components/EmojiPicker/EmojiPicker.component'
 import { PostReactions } from './components/PostReactions/PostReactions.component'
+import { FileAttachment } from '../FileAttachment/FileAttachment.component'
 
 interface PostProps {
   text?: string
   sended: number
   sender?: UserViewData
+  files: string[]
+  containerWidth: number
   isLast: boolean
   id: string
   channelId: string
@@ -52,21 +57,25 @@ export const Post: React.FC<PostProps> = ({
   isLast,
   sender,
   sended,
+  containerWidth,
   id,
   channelId,
   reactions,
+  files,
   members,
 }) => {
   const { accessToken } = useContext(AuthContext)
   const { socket } = useContext(SocketContext)
+  const { startEditMessage } = useContext(EditingMessageContext)
+  const { data: filesInfo } = usePostFiles({ ids: files })
 
-  const [isEdit, setIsEdit] = useState(false)
-  const [editingValue, setEditingValue] = useState(text)
   const [dotMenuOpened, setDotMenuOpened] = useState(false)
   const [emojiPickerOpened, setEmojiPickerOpened] = useState(false)
   const [postReactions, setPostReactions] = useState(reactions)
+  const [progress, setProgress] = useState<string[]>([])
 
   const ref = useRef<HTMLDivElement | null>(null)
+  const downloadLinkRef = useRef<HTMLAnchorElement>(null)
 
   const decoded: DecodedProps = jwt_decode(accessToken)
   const time = DateTime.fromMillis(sended).toLocaleString(DateTime.TIME_SIMPLE)
@@ -134,6 +143,33 @@ export const Post: React.FC<PostProps> = ({
     [],
   )
 
+  const downloadFile = async (
+    fileId: string,
+    filename: string,
+  ): Promise<void> => {
+    setProgress(prev => [...prev, fileId])
+    const file = await axios.get(
+      `${process.env.REACT_APP_API_URL!}/api/attachment/files/download-file?id=${fileId}`,
+      {
+        responseType: 'blob', // Используем 'blob' вместо 'arraybuffer'
+      },
+    )
+
+    const url = URL.createObjectURL(new Blob([file.data]))
+
+    if (downloadLinkRef.current) {
+      downloadLinkRef.current.href = url
+      downloadLinkRef.current.download = filename
+
+      downloadLinkRef.current.click()
+      URL.revokeObjectURL(url)
+      downloadLinkRef.current.href = ''
+      downloadLinkRef.current.download = ''
+    }
+
+    setProgress(prev => prev.filter(i => i !== fileId))
+  }
+
   const handleReactionClick = (reaction: string, own: boolean): void => {
     if (own) {
       socket.emit('remove-message-reaction', {
@@ -159,8 +195,12 @@ export const Post: React.FC<PostProps> = ({
   }
 
   const handleMessageEdit = (): void => {
-    setIsEdit(curr => !curr)
-    setEditingValue(text)
+    startEditMessage({
+      _id: id,
+      text: text ?? '',
+      channel_id: channelId,
+      files,
+    })
     setDotMenuOpened(false)
   }
 
@@ -181,47 +221,48 @@ export const Post: React.FC<PostProps> = ({
     setDotMenuOpened(false)
   }
 
-  const handleEditChanged = (e: ChangeEvent<HTMLInputElement>): void => {
-    setEditingValue(e.target.value)
-  }
-
-  const handleInputKeyPress = (e: KeyboardEvent): void => {
-    if (e.key === 'Enter') {
-      socket.emit('edit-message', {
-        channelId,
-        text: editingValue,
-        messageId: id,
-      })
-      setIsEdit(false)
-    }
-
-    if (e.key === 'Escape') {
-      setIsEdit(false)
-      setEditingValue(text)
-    }
-  }
-
   const isActive = emojiPickerOpened || dotMenuOpened
+
+  const filesLineCount = useMemo(() => {
+    return Math.floor(containerWidth / 192)
+  }, [containerWidth])
 
   return (
     <PostContainer isActive={isActive}>
-      <Avatar username={sender?.username ?? 'U'} size={32} />
+      <Avatar username={sender?.username ?? 'U'} size={36} />
       <Content>
         <Username>
           {sender?.username ?? 'Unknown'} <Time>{time}</Time>
         </Username>
-        {isEdit ? (
-          <TextField
-            id='outlined-basic'
-            autoFocus
-            variant='outlined'
-            value={editingValue}
-            onKeyDown={handleInputKeyPress}
-            onChange={handleEditChanged}
-            size='small'
-          />
-        ) : (
-          <Text dangerouslySetInnerHTML={{ __html: text! }} ref={ref} />
+        <Text dangerouslySetInnerHTML={{ __html: text! }} ref={ref} />
+        {!!files.length && (
+          <Box
+            sx={{
+              padding: '8px 0',
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: 1,
+              height: `${Math.ceil(files.length / filesLineCount) * 64}px`,
+            }}
+          >
+            {filesInfo?.map(file => {
+              const parts = file.filename.split('.')
+              const ext = parts[parts.length - 1]
+              const name = parts.slice(0, parts.length - 1).join('')
+
+              return (
+                <FileAttachment
+                  key={file._id}
+                  filename={name}
+                  ext={ext}
+                  progress={progress.includes(file._id)}
+                  type='download'
+                  fileSize={file.length}
+                  onAction={() => downloadFile(file._id, `${name}.${ext}`)}
+                />
+              )
+            })}
+          </Box>
         )}
         <PostReactions
           reactions={postReactions}
@@ -246,6 +287,7 @@ export const Post: React.FC<PostProps> = ({
           ownPost={decoded._id === sender?._id}
         />
       </Settings>
+      <a ref={downloadLinkRef} target='_self' style={{ display: 'none' }} />
     </PostContainer>
   )
 }

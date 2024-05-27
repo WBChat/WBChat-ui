@@ -1,10 +1,10 @@
-import { Message } from '@api'
+import { Message, UserViewData } from '@api'
 import { ReactionsWithUserNames } from '@commonTypes/channelTypes'
 import { CallMissedOutgoingOutlined } from '@mui/icons-material'
 import { SocketContext } from '@context'
 import { Box, Button, CircularProgress, useEventCallback } from '@mui/material'
-import { useGetChannel, useGetMembers, useGetMessages } from '@queries'
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useGetChannel, useGetMessages, useGetTeamMembers } from '@queries'
+import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
 import { Editor } from '../Editor/Editor.component'
@@ -19,7 +19,13 @@ import {
 
 export const Channel: React.FC = () => {
   const { socket } = useContext(SocketContext)
-  const { channelId } = useParams()
+  const { channelId, teamId } = useParams()
+
+  const [containerWidth, setContainerWidth] = useState(0)
+
+  const postsAreaRef = useRef<HTMLDivElement>(null)
+
+  const [offset, setOffset] = useState(20)
 
   const navigate = useNavigate()
 
@@ -34,13 +40,36 @@ export const Channel: React.FC = () => {
 
   const { data: channelInfo } = useGetChannel({ channelId: channelId ?? '' })
 
-  const { data: members, isFetching: isMembersFetching } = useGetMembers({
-    channelInfo,
-  })
+  const { data: teamMembers, isFetching: isMembersFetching } =
+    useGetTeamMembers({
+      teamId: teamId!,
+    })
 
-  const handlePostSent = useEventCallback((text: string): void => {
-    socket.emit('send-message', { recipientId: channelId, text })
-  })
+  const members: Record<string, UserViewData> | undefined = teamMembers?.reduce(
+    (acc, user) => {
+      return { ...acc, [user._id]: user }
+    },
+    {},
+  )
+
+  const handlePostSent = useEventCallback(
+    (text: string, files: string[]): void => {
+      socket.emit('send-message', { recipientId: channelId, text, files })
+    },
+  )
+
+  useEffect(() => {
+    if (postsAreaRef.current) {
+      setContainerWidth(postsAreaRef.current.getBoundingClientRect().width)
+    }
+  }, [posts])
+
+  const handleResize = (x: number): void => {
+    setOffset(x)
+    setTimeout(() => {
+      postsAreaRef.current?.scrollTo(0, postsAreaRef.current?.scrollHeight)
+    }, 1)
+  }
 
   const handleReceiveMessage = useCallback(
     (post: Message): void => {
@@ -86,11 +115,17 @@ export const Channel: React.FC = () => {
   }
 
   const handleMessageEdited = useCallback(
-    (payload: { payload: { messageId: string; text: string } }): void => {
+    (payload: {
+      payload: { messageId: string; text: string; files: string[] }
+    }): void => {
       setPosts(prev => {
         return prev.map(post =>
           post._id === payload.payload.messageId
-            ? { ...post, text: payload.payload.text }
+            ? {
+                ...post,
+                text: payload.payload.text,
+                files: payload.payload.files,
+              }
             : post,
         )
       })
@@ -127,19 +162,27 @@ export const Channel: React.FC = () => {
           Calling room
         </Button>
       </ChannelHeader>
-      {isFetching || isMembersFetching ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
-          <CircularProgress />
-        </Box>
-      ) : (
-        <PostsArea>
-          {posts.map((post: Message, index: number) => {
+      {isFetching ||
+        (isMembersFetching && (
+          <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
+            <CircularProgress />
+          </Box>
+        ))}
+      <PostsArea
+        offset={`${offset}px`}
+        ref={postsAreaRef}
+        hide={isFetching || isMembersFetching}
+      >
+        {containerWidth !== 0 &&
+          posts.map((post: Message, index: number) => {
             const postReactions = getReactionsWithUserNames(post.reactions)
 
             return (
               <Post
                 text={post.text}
+                containerWidth={containerWidth}
                 id={post._id}
+                files={post.files}
                 channelId={post.channel_id}
                 reactions={postReactions}
                 sended={Number(post.sendedDate)}
@@ -150,11 +193,14 @@ export const Channel: React.FC = () => {
               />
             )
           })}
-        </PostsArea>
-      )}
+      </PostsArea>
 
       <EditorContainer>
-        <Editor onSend={handlePostSent} />
+        <Editor
+          onResize={handleResize}
+          onSend={handlePostSent}
+          channelId={channelId!}
+        />
       </EditorContainer>
     </ChannelContainer>
   )

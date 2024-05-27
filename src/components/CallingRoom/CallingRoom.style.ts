@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 export const VideoPart = styled.div`
   height: calc(100vh - 108px);
@@ -10,7 +10,7 @@ export const VideoGrid = styled.div`
   flex-wrap: wrap;
 `
 
-export const VideoCard = styled.div<{width: string; height: string}>`
+export const VideoCard = styled.div<{width: string; height: string; isSpeaking?: boolean}>`
   width: ${({width}) => width};
   height: ${({height}) => height};
   display: flex;
@@ -19,15 +19,35 @@ export const VideoCard = styled.div<{width: string; height: string}>`
   overflow: hidden;
   position: relative;
   outline: 2px solid transparent;
-  outline-offset: -2px;
+  outline-offset: -3px;
+
+  transition: box-shadow 300ms;
 
   &:hover .name {
     opacity: 1;
     transition: opacity 500ms;
   }
 
+  video {
+    width: calc(100% - 4px)
+  }
+
+  ${({isSpeaking}) => isSpeaking && css`
+    outline-color: #90caf9;
+    outline-style: solid;
+    outline-width: 3px;
+    transition: outline-color 500ms;
+
+    .name {
+      opacity: 1;
+      transition: opacity 500ms;
+    }
+  `}
+
   &:hover {
     outline-color: #90caf9;
+    outline-style: solid;
+    outline-width: 3px;
     transition: outline-color 500ms;
   }
 `

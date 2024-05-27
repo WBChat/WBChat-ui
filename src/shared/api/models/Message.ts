@@ -7,6 +7,7 @@ export type Message = {
   sender: string
   channel_id: string
   text: string
+  files: Array<string>
   sendedDate: number
   reactions?: any
 }

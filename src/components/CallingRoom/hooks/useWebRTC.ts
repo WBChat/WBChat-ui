@@ -15,18 +15,22 @@ interface Result {
   isVideoMuted: boolean
   isRemoteVideosMuted: Record<string, boolean>
   isRemoteAudiosMuted: Record<string, boolean>
+  isSpeaking: Record<string, boolean>
 }
 
 export const useWebRtc = (): Result => {
   const peerConnections = useRef<Record<string, RTCPeerConnection>>({})
   const videoRefs = useRef<Record<string, HTMLVideoElement>>({})
+  const streamRefs = useRef<Record<string, MediaStream>>({})
   const bufferedCandidates = useRef<Record<string, RTCIceCandidate[]>>({})
   const remoteDescriptionsSet = useRef<Record<string, boolean>>({})
   const localStream = useRef<MediaStream>(new MediaStream())
 
   const [users, setUsers] = useState<UserViewData[]>([])
+  const [init, setInit] = useState(false)
   const [isAudioMuted, setIsAudioMuted] = useState(false)
   const [isVideoMuted, setIsVideoMuted] = useState(false)
+  const [isSpeaking, setIsSpeaking] = useState<Record<string, boolean>>({})
   const [isRemoteVideosMuted, setIsRemoteVideoMuted] = useState<
     Record<string, boolean>
   >({})
@@ -45,6 +49,8 @@ export const useWebRtc = (): Result => {
 
     peerConnection.ontrack = event => {
       videoRefs.current[userId].srcObject = event.streams[0]
+
+      streamRefs.current[userId] = event.streams[0]
     }
 
     peerConnection.onicecandidate = event => {
@@ -92,25 +98,25 @@ export const useWebRtc = (): Result => {
 
   const muteAudio = (): void => {
     localStream.current.getAudioTracks()[0].enabled = false
-    socket.emit('muted-audio', {channelId})
+    socket.emit('muted-audio', { channelId })
     setIsAudioMuted(true)
   }
 
   const unmuteAudio = (): void => {
     localStream.current.getAudioTracks()[0].enabled = true
-    socket.emit('unmuted-audio', {channelId})
+    socket.emit('unmuted-audio', { channelId })
     setIsAudioMuted(false)
   }
 
   const muteVideo = (): void => {
     localStream.current.getVideoTracks()[0].enabled = false
-    socket.emit('muted-video', {channelId})
+    socket.emit('muted-video', { channelId })
     setIsVideoMuted(true)
   }
 
   const unmuteVideo = (): void => {
     localStream.current.getVideoTracks()[0].enabled = true
-    socket.emit('unmuted-video', {channelId})
+    socket.emit('unmuted-video', { channelId })
     setIsVideoMuted(false)
   }
 
@@ -174,8 +180,7 @@ export const useWebRtc = (): Result => {
       const peerConnection = peerConnections.current[payload.userId]
 
       if (remoteDescriptionsSet.current[payload.userId]) {
-        peerConnection
-          .addIceCandidate(new RTCIceCandidate(payload.candidate))
+        peerConnection.addIceCandidate(new RTCIceCandidate(payload.candidate))
       } else if (bufferedCandidates.current[payload.userId]) {
         bufferedCandidates.current[payload.userId].push(payload.candidate)
       } else {
@@ -199,10 +204,13 @@ export const useWebRtc = (): Result => {
         })
 
         localStream.current = stream
-        
+
         if (!currentUser || user._id === currentUser._id) {
           if (currentUser) {
             videoRefs.current[currentUser._id].srcObject = stream
+            streamRefs.current[currentUser._id] = stream
+
+            setInit(true)
           }
 
           return
@@ -235,20 +243,61 @@ export const useWebRtc = (): Result => {
   )
 
   const handleMutedAudio = useCallback((payload: { userId: string }) => {
-    setIsRemoteAudioMuted(prev => ({...prev, [payload.userId]: true}))
+    setIsRemoteAudioMuted(prev => ({ ...prev, [payload.userId]: true }))
   }, [])
 
   const handleUnmutedAudio = useCallback((payload: { userId: string }) => {
-    setIsRemoteAudioMuted(prev => ({...prev, [payload.userId]: false}))
+    setIsRemoteAudioMuted(prev => ({ ...prev, [payload.userId]: false }))
   }, [])
 
   const handleMutedVideo = useCallback((payload: { userId: string }) => {
-    setIsRemoteVideoMuted(prev => ({...prev, [payload.userId]: true}))
+    setIsRemoteVideoMuted(prev => ({ ...prev, [payload.userId]: true }))
   }, [])
 
   const handleUnmutedVideo = useCallback((payload: { userId: string }) => {
-    setIsRemoteVideoMuted(prev => ({...prev, [payload.userId]: false}))
+    setIsRemoteVideoMuted(prev => ({ ...prev, [payload.userId]: false }))
   }, [])
+
+  useEffect(() => {
+    if (!init) {
+      return
+    }
+    const audios: Record<
+      string,
+      { analyser: AnalyserNode }
+    > = Object.keys(streamRefs.current).reduce((acc, key) => {
+      const stream = streamRefs.current[key]
+      const audioContext = new AudioContext()
+      const analyser = audioContext.createAnalyser()
+
+      analyser.fftSize = 256
+
+      const source = audioContext.createMediaStreamSource(stream)
+
+      source.connect(analyser)
+
+      return { ...acc, [key]: { analyser } }
+    }, {})
+
+    const interval = setInterval(() => {
+      Object.keys(audios).forEach(key => {
+        const audio = audios[key]
+        const dataArray = new Uint8Array(audio.analyser.frequencyBinCount)
+
+        audio.analyser.getByteFrequencyData(dataArray)
+
+        const sum = dataArray.reduce((a, b) => a + b, 0)
+
+        const average = sum / dataArray.length
+
+        setIsSpeaking(prev => ({ ...prev, [key]: average > 20 }))
+      })
+    }, 300)
+
+    return () => {
+      clearInterval(interval)
+    }
+  }, [init])
 
   useEffect(() => {
     socket.on('call-room-users-list-updated', handleUsersUpdated)
@@ -286,7 +335,7 @@ export const useWebRtc = (): Result => {
 
   useEffect(() => {
     return () => {
-      localStream.current.getTracks().forEach(track => track.stop());
+      localStream.current.getTracks().forEach(track => track.stop())
       Object.values(peerConnections.current).forEach(peer => peer.close())
     }
   }, [])
@@ -298,6 +347,7 @@ export const useWebRtc = (): Result => {
     unmuteAudio,
     muteVideo,
     unmuteVideo,
+    isSpeaking,
     isAudioMuted,
     isVideoMuted,
     isRemoteVideosMuted,

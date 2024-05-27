@@ -58,6 +58,7 @@ export const CallingRoom: React.FC = () => {
     isVideoMuted,
     isRemoteAudiosMuted,
     isRemoteVideosMuted,
+    isSpeaking,
   } = useWebRtc()
 
   const [videoElementSize, setVideoElementSize] = useState({
@@ -145,6 +146,7 @@ export const CallingRoom: React.FC = () => {
                 key={user._id}
                 width={videoElementSize.width}
                 height={videoElementSize.height}
+                isSpeaking={isSpeaking[user._id]}
               >
                 <video
                   ref={ref => {

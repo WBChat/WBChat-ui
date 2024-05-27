@@ -27,7 +27,8 @@ export const PostContainer = styled.div`
   display: flex;
   position: relative;
   gap: 10px;
-  padding: 8px 32px;
+  padding: 0px 32px;
+  padding-top: 10px;
   transition: background 150ms;
   background: ${({isActive}: {isActive: boolean}) => isActive ? '#303234' : 'transparent'};
   :hover {
@@ -46,6 +47,8 @@ export const PostContainer = styled.div`
 
 export const Username = styled.div`
   font-weight: 500;
+  position: relative;
+  top: -3px;
   font-size: 15px;
 `
 
@@ -65,7 +68,7 @@ export const Time = styled.span`
 export const Text = styled.div`
   font-weight: 300;
   font-size: 15px;
-  margin: -8px 0;
+  margin: -12px 0;
 
   img {
     max-width: 500px;

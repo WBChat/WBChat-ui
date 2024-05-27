@@ -71,7 +71,7 @@ export const Login: React.FC = () => {
           <Form>
             <TextField
               size='small'
-              label='Email'
+              label='Email or username'
               variant='outlined'
               id='email'
               name='email'
@@ -93,7 +93,7 @@ export const Login: React.FC = () => {
             />
           </Form>
 
-          <ErrorField>{mutation.error?.message ?? ''}</ErrorField>
+          <ErrorField>{mutation.error?.body?.message ?? ''}</ErrorField>
 
           <LoadingButton
             loading={mutation.isLoading}

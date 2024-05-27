@@ -26,10 +26,12 @@ export const EditorContainer = styled.div`
   right: 12px;
 `
 
-export const PostsArea = styled.div`
+export const PostsArea = styled.div<{offset: string; hide: boolean}>`
   width: 100%;
+  /* display: ${({hide}) => hide ? 'none' : 'flex'}; */
   display: flex;
-  max-height: calc(100vh - 260px);
+  opacity: ${({hide}) => hide ? 0 : 1};;
+  max-height: calc(100vh - ${({offset}) => offset});
   padding: 16px 0;
   overflow-y: auto;
   ::-webkit-scrollbar {
@@ -51,5 +53,4 @@ export const PostsArea = styled.div`
     background: rgba(0, 0, 0, 0.6);
   }
   flex-direction: column;
-  gap: 8px;
 `

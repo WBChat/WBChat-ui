@@ -43,3 +43,25 @@ export const EditorContainer = styled.div`
 `
 
 export const SendButton = styled(Button)``
+
+export const Quote = styled.div`
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  border: 2px solid #42a5f5;
+  background-color: #2B2E30;
+  padding: 4px 10px;
+  margin-bottom: 4px;
+  position: relative;
+`
+
+export const QuoteBody = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-height: 18px;
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+  max-width: calc(100% - 32px)
+`
