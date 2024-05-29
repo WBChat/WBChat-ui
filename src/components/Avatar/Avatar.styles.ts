@@ -8,7 +8,6 @@ export const Container = styled.div`
   font-size: 28px;
   font-weight: 900;
   text-transform: uppercase;
-  border-radius: 4px;
   -webkit-text-stroke: 0.5px black;
   cursor: default;
 `

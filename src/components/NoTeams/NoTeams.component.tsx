@@ -13,7 +13,7 @@ import { Plans } from '../Plans/Plans.component'
 export const NoTeams: React.FC = () => {
   const { teamsList } = useContext(TeamContext)
 
-  if (teamsList !== undefined && teamsList.length) {
+  if (teamsList?.length) {
     return <Navigate to={`/team/${teamsList[0]._id}/`} />
   }
 

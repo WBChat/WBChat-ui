@@ -43,7 +43,7 @@ export const CallingRoom: React.FC = () => {
   const { channelId } = useParams()
   const { socket } = useContext(SocketContext)
 
-  const currentUser = useGetCurrentUser()
+  const { currentUser } = useGetCurrentUser()
 
   const navigate = useNavigate()
 
@@ -163,7 +163,7 @@ export const CallingRoom: React.FC = () => {
                 />
                 {isRemoteVideosMuted[user._id] && (
                   <Avatar
-                    url={user.avatar}
+                    id={user.avatar}
                     username={user.username}
                     fullSize
                     fontSize={videoElementSize.fontSize}

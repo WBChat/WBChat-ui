@@ -41,7 +41,7 @@ export const ViewMembersModal: React.FC<Props> = ({ open, handleClose }) => {
   const { teamId } = useParams()
   const { getTeamById } = useContext(TeamContext)
   const currentTeam = getTeamById(teamId!)
-  const currentUser = useGetCurrentUser()
+  const { currentUser } = useGetCurrentUser()
   const {
     data,
     isFetching,

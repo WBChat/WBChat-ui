@@ -1,9 +1,12 @@
 import { stringToColor } from '@helpers'
+import { cld } from 'src/App'
+import { fill } from '@cloudinary/url-gen/actions/resize'
+import { AdvancedImage } from '@cloudinary/react'
 
 import { Container } from './Avatar.styles'
 
 interface AvatarProps {
-  url?: string
+  id?: string
   size?: number
   fullSize?: boolean
   fontSize?: string
@@ -11,19 +14,20 @@ interface AvatarProps {
 }
 
 export const Avatar: React.FC<AvatarProps> = ({
-  url,
+  id,
   username,
   size,
   fontSize,
   fullSize,
 }) => {
-  if (!url) {
+  if (!id) {
     return (
       <Container
         style={{
           width: fullSize ? '100%' : `${size}px`,
           height: fullSize ? '100%' : `${size}px`,
           fontSize: fontSize ?? undefined,
+          border: '1px solid white',
           background: stringToColor(username),
         }}
       >
@@ -32,5 +36,21 @@ export const Avatar: React.FC<AvatarProps> = ({
     )
   }
 
-  return <img width={size} height={size} src={url} alt={username} />
+  const myImage = cld.image(id)
+
+  if (size) {
+    myImage.resize(fill().width(size).height(size))
+  }
+
+  return (
+    <div
+      style={{
+        width: fullSize ? '100%' : `${size}px`,
+        height: fullSize ? '100%' : `${size}px`,
+        border: '1px solid white',
+      }}
+    >
+      <AdvancedImage cldImg={myImage} />
+    </div>
+  )
 }

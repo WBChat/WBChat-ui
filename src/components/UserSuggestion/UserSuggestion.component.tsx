@@ -22,7 +22,7 @@ export const UserSuggestion: React.FC<Props> = props => {
         },
       }}
     >
-      <Avatar url={props.avatarSrc} username={props.username} size={42} />
+      <Avatar id={props.avatarSrc} username={props.username} size={42} />
       <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
         <Typography fontSize={20} fontWeight={700}>
           {props.username}

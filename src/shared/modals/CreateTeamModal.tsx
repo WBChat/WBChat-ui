@@ -1,5 +1,4 @@
 import LoadingButton from '@mui/lab/LoadingButton'
-import Button from '@mui/lab/LoadingButton'
 import { ErrorField } from 'src/components/Login/Login.styles'
 import { Box, Modal, TextField, Typography } from '@mui/material'
 import { useState } from 'react'
@@ -104,14 +103,14 @@ export const CreateTeamModal: React.FC<Props> = ({
           onChange={e => setKey(e.target.value)}
         />
         {error && <ErrorField style={{ padding: 0 }}>{error ?? ''}</ErrorField>}
-        <Button
+        <LoadingButton
           sx={{ width: '100%' }}
           variant='contained'
           loading={loading}
           onClick={() => handleSubmit(key, name)}
         >
           Create
-        </Button>
+        </LoadingButton>
       </Box>
     </Modal>
   )

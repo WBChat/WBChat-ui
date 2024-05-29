@@ -2,6 +2,7 @@ import { Routes as Paths } from '@constants'
 import { AuthContext } from '@context'
 import { MainLayout } from '@layouts'
 import React, { useContext } from 'react'
+import { Cloudinary } from '@cloudinary/url-gen'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 
 import { Channel } from './components/Channel/Channel.component'
@@ -13,6 +14,12 @@ import { Team } from './components/Team'
 import { NoTeams } from './components/NoTeams/NoTeams.component'
 import { CallingRoom } from './components/CallingRoom/CallingRoom.component'
 import { CreateTeams } from './components/NoTeams/CreateTeams.component'
+
+export const cld = new Cloudinary({
+  cloud: {
+    cloudName: 'wb-chat',
+  },
+})
 
 export const App: React.FC = () => {
   const { isAuth } = useContext(AuthContext)

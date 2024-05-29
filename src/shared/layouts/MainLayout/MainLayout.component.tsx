@@ -4,11 +4,14 @@ import {
   TCreateChannelData,
   TeamViewData,
   TeamsControllerService,
+  UsersControllerService,
 } from '@api'
 import { useGetCurrentUser } from '@queries'
 import { CommonError } from '@commonTypes/errorTypes'
 import { Routes } from '@constants'
+import { AccountBox, ArrowDropDown, Logout, Person } from '@mui/icons-material'
 import { AuthContext } from '@context'
+import { Avatar } from 'src/components/Avatar/Avatar.component'
 import AddIcon from '@mui/icons-material/Add'
 import ExitToAppIcon from '@mui/icons-material/ExitToApp'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -57,11 +60,32 @@ import {
 export const MainLayout: React.FC = () => {
   const { logout } = useContext(AuthContext)
   const { channelId, teamId } = useParams()
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const { getTeamById, teamsList, refetchTeams } = useContext(TeamContext)
 
-  const currentUser = useGetCurrentUser()
+  const { currentUser, refetch: refetchCurrentUser } = useGetCurrentUser()
   const [expanded, setExpanded] = useState(false)
+  const [expandedProfile, setExpandedProfile] = useState(false)
+
+  const updateAvatar = useMutation(
+    'update-avatar',
+    (file: Blob) =>
+      UsersControllerService.usersControllerUploadFile({ formData: { file } }),
+    {
+      onSuccess: () => {
+        refetchCurrentUser()
+
+        if (fileInputRef.current) {
+          fileInputRef.current.value = ''
+          fileInputRef.current.type = 'text'
+          fileInputRef.current.type = 'file'
+        }
+      },
+    },
+  )
+
+  const profileRef = useRef(null)
 
   const teamExpandRef = useRef<HTMLDivElement>(null)
 
@@ -99,6 +123,20 @@ export const MainLayout: React.FC = () => {
         refetchTeams()
       },
     })
+  }
+
+  const handleFileUploaded = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ): Promise<void> => {
+    const file = e.currentTarget.files?.[0]
+
+    if (file) {
+      updateAvatar.mutate(file)
+    }
+  }
+
+  const handleChangeAvatar = (): void => {
+    fileInputRef.current?.click()
   }
 
   const navigate = useNavigate()
@@ -146,6 +184,8 @@ export const MainLayout: React.FC = () => {
 
   const currentTeam = getTeamById(teamId ?? '')
 
+  const isOwner = currentTeam?.owner === currentUser?._id
+
   if (!currentTeam || !teamsList) {
     return <Navigate to={Routes.Home} />
   }
@@ -155,12 +195,20 @@ export const MainLayout: React.FC = () => {
       <Header>
         <Title>WBChat</Title>
         <Divider orientation='vertical' />
-        <Box display='flex' gap='12px' sx={{ overflowX: 'auto' }}>
+        <Box
+          display='flex'
+          gap='12px'
+          sx={{ overflowX: 'auto', alignItems: 'center' }}
+        >
           {teamsList.map((team: TeamViewData) => {
             return (
               <Link to={`/team/${team._id}`} key={team._id}>
                 <Button
                   variant='contained'
+                  sx={{
+                    outline: teamId === team._id ? '3px solid #086be6' : 'none',
+                    outlineOffset: '-3px',
+                  }}
                   color={teamId === team._id ? 'secondary' : undefined}
                 >
                   {team.name}
@@ -173,9 +221,52 @@ export const MainLayout: React.FC = () => {
           </Button>
         </Box>
         <Divider orientation='vertical' />
-        <Button variant='text' onClick={logout}>
-          Logout
-        </Button>
+        <Box display='flex' alignItems='center' sx={{ cursor: 'pointer' }}>
+          <IconButton
+            sx={{ borderRadius: 0, p: '5px' }}
+            ref={profileRef}
+            onClick={() => setExpandedProfile(true)}
+          >
+            <ArrowDropDown fontSize='large' />
+            <Avatar
+              id={currentUser?.avatar}
+              username={currentUser?.username ?? ''}
+              size={40}
+            />
+          </IconButton>
+          <Menu
+            open={expandedProfile}
+            onClose={() => setExpandedProfile(false)}
+            anchorEl={() => profileRef.current!}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'right',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+          >
+            <MenuItem sx={{ display: 'flex', gap: 1, cursor: 'default' }}>
+              <Person color='primary' />
+              <Typography fontSize={17} fontWeight={800} color='primary'>
+                {currentUser?.username}
+              </Typography>
+            </MenuItem>
+            <MenuItem
+              sx={{ display: 'flex', gap: 1 }}
+              onClick={handleChangeAvatar}
+            >
+              <AccountBox />
+              Change avatar
+            </MenuItem>
+            <Divider sx={{ my: 0.5 }} />
+            <MenuItem sx={{ display: 'flex', gap: 1 }} onClick={logout}>
+              <Logout color='error' />
+              <Typography color='error'>Logout</Typography>
+            </MenuItem>
+          </Menu>
+        </Box>
       </Header>
       <ContentBox>
         <Sidebar>
@@ -211,13 +302,15 @@ export const MainLayout: React.FC = () => {
                 <ViewListIcon />
                 View members
               </MenuItem>
-              <MenuItem
-                sx={{ display: 'flex', gap: 1 }}
-                onClick={() => setOpenAddMembersModal(true)}
-              >
-                <AddIcon />
-                Add members
-              </MenuItem>
+              {isOwner && (
+                <MenuItem
+                  sx={{ display: 'flex', gap: 1 }}
+                  onClick={() => setOpenAddMembersModal(true)}
+                >
+                  <AddIcon />
+                  Add members
+                </MenuItem>
+              )}
               <Divider sx={{ my: 0.5 }} />
               {currentTeam.owner !== currentUser?._id ? (
                 <MenuItem
@@ -296,6 +389,12 @@ export const MainLayout: React.FC = () => {
       <AddMembersModal
         open={openAddMembersModal}
         handleClose={() => setOpenAddMembersModal(false)}
+      />
+      <input
+        ref={fileInputRef}
+        type='file'
+        onChange={handleFileUploaded}
+        style={{ display: 'none' }}
       />
     </Main>
   )

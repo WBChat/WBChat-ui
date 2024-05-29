@@ -229,7 +229,11 @@ export const Post: React.FC<PostProps> = ({
 
   return (
     <PostContainer isActive={isActive}>
-      <Avatar username={sender?.username ?? 'U'} size={36} />
+      <Avatar
+        id={sender?.avatar}
+        username={sender?.username ?? 'U'}
+        size={36}
+      />
       <Content>
         <Username>
           {sender?.username ?? 'Unknown'} <Time>{time}</Time>

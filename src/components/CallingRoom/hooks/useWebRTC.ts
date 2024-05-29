@@ -40,7 +40,7 @@ export const useWebRtc = (): Result => {
 
   const { socket } = useContext(SocketContext)
   const { channelId } = useParams()
-  const currentUser = useGetCurrentUser()
+  const {currentUser} = useGetCurrentUser()
 
   const createPeer = (userId: string, socketId: string): RTCPeerConnection => {
     const peerConnection = new RTCPeerConnection({

@@ -120,10 +120,6 @@ export const Editor: React.FC<EditorProps> = ({
       }))
       setProgress(prev => [...prev, id])
 
-      const formData = new FormData()
-
-      formData.append('file', file)
-
       const res = await AttachmentsService.filesControllerUploadFile({
         formData: { file },
       })
@@ -137,6 +133,8 @@ export const Editor: React.FC<EditorProps> = ({
 
       if (inputRef.current) {
         inputRef.current.value = ''
+        inputRef.current.type = 'text'
+        inputRef.current.type = 'file'
       }
     }
   }

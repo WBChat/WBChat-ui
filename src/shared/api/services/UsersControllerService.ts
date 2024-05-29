@@ -70,4 +70,23 @@ export class UsersControllerService {
       },
     })
   }
+
+  /**
+   * @returns any
+   * @throws ApiError
+   */
+  public static usersControllerUploadFile({
+    formData,
+  }: {
+    formData: {
+      file?: Blob
+    }
+  }): CancelablePromise<any> {
+    return __request(OpenAPI, {
+      method: 'POST',
+      url: '/api/users/change-user-avatar',
+      formData: formData,
+      mediaType: 'multipart/form-data',
+    })
+  }
 }

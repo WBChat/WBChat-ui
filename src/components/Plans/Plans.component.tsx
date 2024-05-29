@@ -25,7 +25,7 @@ export const Plans: React.FC = () => {
     { requestBody: TCreateTeamData }
   >('create_team', TeamsControllerService.teamsControllerCreateTeam)
 
-  const user = useGetCurrentUser()
+  const { currentUser } = useGetCurrentUser()
   const navigate = useNavigate()
 
   const handleTeamModalSubmit = (key: string, name: string): void => {
@@ -112,7 +112,7 @@ export const Plans: React.FC = () => {
       </Card>
       <CreateTeamModal
         open={openModal}
-        emailSent={user?.email}
+        emailSent={currentUser?.email}
         handleClose={() => setOpenModal(false)}
         handleSubmit={handleTeamModalSubmit}
         loading={createTeam.isLoading}

@@ -12,12 +12,14 @@ export const PostReactions: React.FC<Props> = ({
   reactions,
   onReactionClick,
 }) => {
-  const user = useGetCurrentUser()
+  const { currentUser } = useGetCurrentUser()
 
   return (
     <Container>
       {Object.keys(reactions).map((emoji: string) => {
-        const own = reactions[emoji].userNames.includes(user?.username ?? '')
+        const own = reactions[emoji].userNames.includes(
+          currentUser?.username ?? '',
+        )
 
         return (
           <Reaction own={own} onClick={() => onReactionClick?.(emoji, own)}>
