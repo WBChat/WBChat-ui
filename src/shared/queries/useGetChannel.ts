@@ -7,7 +7,7 @@ interface Props {
 
 export const useGetChannel = (props: Props): UseQueryResult<ChannelViewData> => {
     const query = useQuery(
-        'get-channel',
+        ['get-channel', props.channelId],
         () => {
           return ChannelsControllerService.channelsControllerGetChannelById({
             channelId: props.channelId,

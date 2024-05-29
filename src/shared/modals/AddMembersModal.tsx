@@ -10,13 +10,15 @@ import {
 import { useMutation } from 'react-query'
 import { AddCircleOutline } from '@mui/icons-material'
 import { useDebounce } from 'use-debounce'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { CommonError } from '@commonTypes/errorTypes'
 import { UserSuggestion } from 'src/components/UserSuggestion'
 import { useGetPeople, useGetTeamMembers } from '../queries/useGetMembers'
 import { SuccessResponse } from '../api/models/SuccessResponse'
 import { TeamsControllerService } from '../api/services/TeamsControllerService'
+import { TeamContext } from '../context/team/TeamContext'
+import { useGetCurrentUser } from '../queries/useGetCurrentUser'
 
 interface Props {
   open: boolean
@@ -41,9 +43,13 @@ const style = {
 const PAGE_SIZE = 5
 
 export const AddMembersModal: React.FC<Props> = ({ open, handleClose }) => {
+  const { getTeamById } = useContext(TeamContext)
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
   const { teamId } = useParams()
+
+  const currentUser = useGetCurrentUser()
+  const currentTeam = getTeamById(teamId!)
 
   const { data: teamMembers, refetch: refetchTeamMembers } = useGetTeamMembers({
     teamId: teamId!,
@@ -80,6 +86,8 @@ export const AddMembersModal: React.FC<Props> = ({ open, handleClose }) => {
     addMember.mutate(memberId)
   }
 
+  const isOwner = currentTeam?.owner === currentUser?._id
+
   return (
     <Modal
       open={open}
@@ -112,6 +120,7 @@ export const AddMembersModal: React.FC<Props> = ({ open, handleClose }) => {
                   avatarSrc={user.avatar}
                   key={user._id}
                   actions={
+                    isOwner &&
                     !teamMembers?.map(m => m._id)?.includes(user._id) && (
                       <Box onClick={() => handleAddMember(user._id)}>
                         <AddCircleOutline

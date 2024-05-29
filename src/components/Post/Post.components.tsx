@@ -235,7 +235,7 @@ export const Post: React.FC<PostProps> = ({
           {sender?.username ?? 'Unknown'} <Time>{time}</Time>
         </Username>
         <Text dangerouslySetInnerHTML={{ __html: text! }} ref={ref} />
-        {!!files.length && (
+        {!!files?.length && (
           <Box
             sx={{
               padding: '8px 0',

@@ -15,6 +15,7 @@ import { useGetTeamMembers } from '../queries/useGetMembers'
 import { TeamContext } from '../context/team/TeamContext'
 import { TeamsControllerService } from '../api/services/TeamsControllerService'
 import { SuccessResponse } from '../api/models/SuccessResponse'
+import { useGetCurrentUser } from '../queries/useGetCurrentUser'
 
 interface Props {
   open: boolean
@@ -40,6 +41,7 @@ export const ViewMembersModal: React.FC<Props> = ({ open, handleClose }) => {
   const { teamId } = useParams()
   const { getTeamById } = useContext(TeamContext)
   const currentTeam = getTeamById(teamId!)
+  const currentUser = useGetCurrentUser()
   const {
     data,
     isFetching,
@@ -63,6 +65,8 @@ export const ViewMembersModal: React.FC<Props> = ({ open, handleClose }) => {
   const handleRemoveMember = (memberId: string): void => {
     removeMember.mutate(memberId)
   }
+
+  const isMeOwner = currentTeam?.owner === currentUser?._id
 
   return (
     <Modal
@@ -92,7 +96,7 @@ export const ViewMembersModal: React.FC<Props> = ({ open, handleClose }) => {
                 isOwner={isOwner}
                 avatarSrc={user.avatar}
                 actions={
-                  !isOwner &&
+                  isMeOwner &&
                   user._id !== currentTeam?.owner && (
                     <RemoveCircleOutline
                       onClick={() => handleRemoveMember(user._id)}
