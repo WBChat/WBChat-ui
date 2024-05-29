@@ -66,9 +66,6 @@ export const Channel: React.FC = () => {
 
   const handleResize = (x: number): void => {
     setOffset(x)
-    setTimeout(() => {
-      postsAreaRef.current?.scrollTo(0, postsAreaRef.current?.scrollHeight)
-    }, 1)
   }
 
   const handleReceiveMessage = useCallback(

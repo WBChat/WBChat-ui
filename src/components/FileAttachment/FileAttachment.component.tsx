@@ -8,9 +8,10 @@ export const FileAttachment: React.FC<{
   ext: string
   type: 'download' | 'close'
   progress?: boolean
+  isError?: boolean
 
   onAction?: () => void
-}> = ({ filename, type, ext, fileSize, progress, onAction }) => {
+}> = ({ filename, type, ext, fileSize, progress, onAction, isError }) => {
   return (
     <Box
       sx={{
@@ -43,6 +44,10 @@ export const FileAttachment: React.FC<{
         </Box>
         {progress && type === 'close' ? (
           <CircularProgress size={12} />
+        ) : isError ? (
+          <Typography fontSize={11} color='error'>
+            Upload error
+          </Typography>
         ) : (
           <Typography fontSize={11} color='GrayText'>
             {filesize(fileSize, { standard: 'jedec' })}

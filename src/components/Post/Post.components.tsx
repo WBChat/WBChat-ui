@@ -215,7 +215,7 @@ export const Post: React.FC<PostProps> = ({
 
   const handleMessageCopy = (): void => {
     if (text) {
-      navigator.clipboard.writeText(text)
+      navigator.clipboard.writeText(ref.current?.innerText ?? '')
     }
 
     setDotMenuOpened(false)

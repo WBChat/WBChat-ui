@@ -31,6 +31,7 @@ export const Editor: React.FC<EditorProps> = ({
     Record<string, { name: string; ext: string; size: number }>
   >({})
   const [progress, setProgress] = useState<string[]>([])
+  const [errors, setErrors] = useState<string[]>([])
 
   const handleEditorInit = (evt: unknown, editor: TEditor): void => {
     editorRef.current = editor
@@ -71,18 +72,22 @@ export const Editor: React.FC<EditorProps> = ({
 
   useEffect(() => {
     if (Object.values(files).length && editingMessage) {
-      onResize(380)
+      onResize(400)
 
       return
     }
 
-    if (Object.values(files).length) {
-      onResize(320)
+    if (Object.values(files).length || editingMessage) {
+      onResize(340)
 
       return
     }
-    onResize(268)
+    onResize(290)
   }, [files, editingMessage])
+
+  const filterFiles = (fileIds: string[]): string[] => {
+    return fileIds.filter(id => !errors.includes(id))
+  }
 
   const handleSubmit = useEventCallback((value: string): void => {
     if (value.trim() && progress.length === 0) {
@@ -90,16 +95,17 @@ export const Editor: React.FC<EditorProps> = ({
         socket.emit('edit-message', {
           channelId,
           text: value,
-          files: Object.keys(files),
+          files: filterFiles(Object.keys(files)),
           messageId: editingMessage._id,
         })
         closeEdit()
 
         return
       }
-      onSend(value, Object.keys(files))
+      onSend(value, filterFiles(Object.keys(files)))
       setText('')
       setFiles({})
+      setErrors([])
     }
   })
 
@@ -120,21 +126,23 @@ export const Editor: React.FC<EditorProps> = ({
       }))
       setProgress(prev => [...prev, id])
 
-      const res = await AttachmentsService.filesControllerUploadFile({
-        formData: { file },
-      })
+      try {
+        const res = await AttachmentsService.filesControllerUploadFile({
+          formData: { file },
+        })
 
-      setFiles(f => {
-        delete f[id]
+        setFiles(f => {
+          delete f[id]
 
-        return { ...f, [res]: { name, ext, size: file.size } }
-      })
+          return { ...f, [res]: { name, ext, size: file.size } }
+        })
+      } catch {
+        setErrors(prev => [...prev, id])
+      }
       setProgress(prev => prev.filter(i => i !== id))
 
       if (inputRef.current) {
         inputRef.current.value = ''
-        inputRef.current.type = 'text'
-        inputRef.current.type = 'file'
       }
     }
   }
@@ -143,6 +151,7 @@ export const Editor: React.FC<EditorProps> = ({
     clearEdit()
     setText('')
     setFiles({})
+    setErrors([])
   }
 
   const isEditing = editingMessage && editingMessage.channel_id === channelId
@@ -244,6 +253,7 @@ export const Editor: React.FC<EditorProps> = ({
               key={key}
               type='close'
               progress={progress.includes(key)}
+              isError={errors.includes(key)}
               fileSize={file.size}
               filename={file.name}
               ext={file.ext}

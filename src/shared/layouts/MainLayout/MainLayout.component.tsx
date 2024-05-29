@@ -71,7 +71,9 @@ export const MainLayout: React.FC = () => {
   const updateAvatar = useMutation(
     'update-avatar',
     (file: Blob) =>
-      UsersControllerService.usersControllerUploadFile({ formData: { file } }),
+      UsersControllerService.usersControllerUpdateAvatar({
+        formData: { file },
+      }),
     {
       onSuccess: () => {
         refetchCurrentUser()

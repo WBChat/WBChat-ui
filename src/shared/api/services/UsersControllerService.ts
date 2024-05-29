@@ -75,7 +75,7 @@ export class UsersControllerService {
    * @returns any
    * @throws ApiError
    */
-  public static usersControllerUploadFile({
+  public static usersControllerUpdateAvatar({
     formData,
   }: {
     formData: {
