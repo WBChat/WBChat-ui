@@ -27,7 +27,7 @@ export const Avatar: React.FC<AvatarProps> = ({
           width: fullSize ? '100%' : `${size}px`,
           height: fullSize ? '100%' : `${size}px`,
           fontSize: fontSize ?? undefined,
-          border: '1px solid white',
+          border: !fullSize ? '1px solid white' : 'none',
           background: stringToColor(username),
         }}
       >
@@ -47,7 +47,10 @@ export const Avatar: React.FC<AvatarProps> = ({
       style={{
         width: fullSize ? '100%' : `${size}px`,
         height: fullSize ? '100%' : `${size}px`,
-        border: '1px solid white',
+        border: !fullSize ? '1px solid white' : 'none',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
       }}
     >
       <AdvancedImage cldImg={myImage} />
